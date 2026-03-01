@@ -39,8 +39,7 @@ RequestBody:
 }<br>
 7. Name: DeleteCategoryById,
 Method: DELETE,
-Url: http://localhost:8185/api/category/delete/2
-<br>
+Url: http://localhost:8185/api/category/delete/2<br>
 
 ### Item:
 1. Name: CreateItem,
@@ -78,8 +77,7 @@ RequestBody:
 }<br>
 6. Name: DeleteItem,
 Method: DELETE,
-Url: http://localhost:8185/api/item/delete/2
-<br>
+Url: http://localhost:8185/api/item/delete/2<br>
 
 ### Users:
 1. Name: CreateUsers,
