@@ -120,3 +120,69 @@ RequestBody:
 Method: DELETE,
 Url: http://localhost:8185/api/users/delete/1<br>
 
+### Orders:
+1. Name: CreateOrders, (make sure there is a user with id=1 in the database),
+Method: POST,
+Url: http://localhost:8185/api/orders/create,
+RequestBody: 
+{
+    "oderId": 0,
+    "orderDate": "03-01-2026",
+    "totalAmount": 20,
+    "userId": 1
+} <br>
+2. Name: GetAllOrders,
+Method: GET,
+Url: http://localhost:8185/api/orders/ <br>
+3. Name: GetOrdersById,
+Method: GET,
+Url: http://localhost:8185/api/orders/1 <br>
+4. Name: UpdateOrders, 
+Method: PUT,
+Url: http://localhost:8185/api/orders/edit,
+RequestBody:
+{
+    "orderDate": "03-01-2026",
+    "orderId": 1,
+    "totalAmount": 30.0,
+    "users": null
+}<br>
+5. Name: DeleteOrdersById,
+Method: DELETE,
+Url: http://localhost:8185/api/orders/delete/1<br>
+
+### OrderDetails:
+1. Name: CreateOrderDetails,
+Method: POST,
+Url: http://localhost:8185/api/orderdetails/create,
+RequestBody: 
+{
+    "itemOrderId": 0,
+    "productName": "Cheese Pizza",
+    "categoryName": "Pizza",
+    "price": 10,
+    "qty": 2,
+    "itemValue": 10
+} <br>
+2. Name: GetAllOrderDetails,
+Method: GET,
+Url: http://localhost:8185/api/orderdetails/ <br>
+3. Name: GetOrderDetailsById,
+Method: GET,
+Url: http://localhost:8185/api/orderdetails/1 <br>
+4. Name: UpdateOrderDetails, 
+Method: PUT,
+Url: http://localhost:8185/api/orderdetails/edit,
+RequestBody:
+{
+    "categoryName": "Pizza",
+    "itemOrder": null,
+    "itemOrderId": 1,
+    "itemValue": 20.0,
+    "price": 10.0,
+    "productName": "Double Cheese Pizza",
+    "qty": 2
+}<br>
+5. Name: DeleteOrderDetailsById,
+Method: DELETE,
+Url: http://localhost:8185/api/orderdetails/delete/1<br>
