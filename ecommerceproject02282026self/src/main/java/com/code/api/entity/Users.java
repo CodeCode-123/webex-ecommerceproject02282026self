@@ -37,7 +37,7 @@ public class Users {
 	@Lob
 	@Column(name="image_data")
 	private byte[] imageData;
-	@Column(name="country",length=50,nullable=false)
+	@Column(name="country",length=50)
 	private String country;
 	@Column(name="password",length=20,nullable=false)
 	private String password;

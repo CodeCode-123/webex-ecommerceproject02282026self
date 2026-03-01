@@ -5,11 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UsersDTO {
+public class RegisterDTO {
+	private String email;
+	private String password;
 	private String firstName;
 	private String lastName;
-	private String gender;
-	private String[] languages;
-	//private byte[] imageData;
-	private String country;
 }

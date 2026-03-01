@@ -38,10 +38,9 @@ public class ItemServiceImpl implements IItemService {
 		// TODO Auto-generated method stub
 		// find by id
 		Optional<Item> itemOptional = itemRepository.findById(id);
-		Item item = null;
 		// check if null
 		if (itemOptional.isPresent()) {
-			itemRepository.delete(item);
+			itemRepository.delete(itemOptional.get());
 			return "Record is deleted successfully";
 		}
 		return "Item with id " + id + " is not found";

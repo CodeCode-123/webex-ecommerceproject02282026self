@@ -38,9 +38,5 @@ public class Item implements Serializable{
 	 @JoinColumn(name="category_id")
 	private Category category;
 	//--------------------------------------------------------------------------------------------------------//
-	
-	public Item() {
-		this.itemId = 0;
-	}
 }
 
