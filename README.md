@@ -119,15 +119,17 @@ Method: DELETE,
 Url: http://localhost:8185/api/users/delete/1<br>
 
 ### Orders:
-1. Name: CreateOrders, (make sure there is a user with id=1 in the database),
+1. Name: CreateOrders, (ensure that there is a user with id=1 in the database, get the users's information during retrieving),
 Method: POST,
 Url: http://localhost:8185/api/orders/create,
 RequestBody: 
 {
     "oderId": 0,
-    "orderDate": "03-01-2026",
+    "orderDate": "03-02-2026",
     "totalAmount": 20,
-    "userId": 1
+    "users": {
+        "id": 1
+    }
 } <br>
 2. Name: GetAllOrders,
 Method: GET,
@@ -135,15 +137,30 @@ Url: http://localhost:8185/api/orders/ <br>
 3. Name: GetOrdersById,
 Method: GET,
 Url: http://localhost:8185/api/orders/1 <br>
-4. Name: UpdateOrders, 
+4. Name: UpdateOrders, (don't miss any fields; this is a PUT method)
 Method: PUT,
 Url: http://localhost:8185/api/orders/edit,
 RequestBody:
 {
-    "orderDate": "03-01-2026",
+    "orderDate": "03-02-2026",
     "orderId": 1,
     "totalAmount": 30.0,
-    "users": null
+    "users": {
+        "country": "United Kingdom",
+        "emailId": "john.doe@abc.com",
+        "firstName": "John",
+        "gender": "male",
+        "id": 1,
+        "imageData": null,
+        "languages": [
+            "C",
+            "C#",
+            "Java"
+        ],
+        "lastName": "Doe",
+        "password": "password",
+        "role": "Customer"
+    }
 }<br>
 5. Name: DeleteOrdersById,
 Method: DELETE,
@@ -160,8 +177,11 @@ RequestBody:
     "categoryName": "Pizza",
     "price": 10,
     "qty": 2,
-    "itemValue": 10
-} <br>
+    "itemValue": 20,
+    "itemOrder": {
+        "orderId": 1
+    }
+}<br>
 2. Name: GetAllOrderDetails,
 Method: GET,
 Url: http://localhost:8185/api/orderdetails/ <br>
@@ -174,12 +194,32 @@ Url: http://localhost:8185/api/orderdetails/edit,
 RequestBody:
 {
     "categoryName": "Pizza",
-    "itemOrder": null,
+    "itemOrder": {
+        "orderDate": "03-02-2026",
+        "orderId": 1,
+        "totalAmount": 30.0,
+        "users": {
+            "country": "United Kingdom",
+            "emailId": "john.doe@abc.com",
+            "firstName": "John",
+            "gender": "male",
+            "id": 1,
+            "imageData": null,
+            "languages": [
+                "C",
+                "C#",
+                "Java"
+            ],
+            "lastName": "Doe",
+            "password": "password",
+            "role": "Customer"
+        }
+    },
     "itemOrderId": 1,
-    "itemValue": 20.0,
+    "itemValue": 30.0,
     "price": 10.0,
-    "productName": "Double Cheese Pizza",
-    "qty": 2
+    "productName": "Cheese Pizza",
+    "qty": 3
 }<br>
 5. Name: DeleteOrderDetailsById,
 Method: DELETE,
