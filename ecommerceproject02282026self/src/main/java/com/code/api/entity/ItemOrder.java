@@ -1,9 +1,7 @@
 package com.code.api.entity;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -43,6 +41,8 @@ public class ItemOrder {
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="itemOrder", cascade=CascadeType.ALL)
 	private List<ItemOrderDetails> itemOrderDetailsList;
 	
+	
+	/*
 	public void setTotalAmount() {
 		double tempTotalAmount = 0;
 		if (itemOrderDetailsList != null && itemOrderDetailsList.size() > 0) {
@@ -78,5 +78,5 @@ public class ItemOrder {
 			}
 		}
 		this.totalAmount = getTotalAmount();
-	}
+	}*/
 }

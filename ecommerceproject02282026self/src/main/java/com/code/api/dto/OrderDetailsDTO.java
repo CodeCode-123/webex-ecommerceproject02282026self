@@ -8,15 +8,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderDetailsDTO {
+	private int itemOrderDetailsId;
 	private Item item;
 	private int qty;
 	private double itemValue;
 	private ItemOrder itemOrder;
 	
+	/*
 	public void setItemValue() {
 		this.itemValue = qty * item.getItemPrice();
 	}
 	public double getItemValue() {
 		return qty * item.getItemPrice();
-	}
+	}*/
 }

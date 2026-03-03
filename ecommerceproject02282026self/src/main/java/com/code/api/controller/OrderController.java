@@ -53,7 +53,7 @@ public class OrderController {
 		order.setOrderDate(formattedDate);
 		System.out.println("Order date: " + order.getOrderDate());
 		order.setUsers(users);
-		order.setTotalAmount();
+		//order.setTotalAmount();
 		itemOrderService.add(order);
 		if (orderRequestDTO.getItemOrderDetailsList() != null 
 				&& orderRequestDTO.getItemOrderDetailsList().size() > 0) {

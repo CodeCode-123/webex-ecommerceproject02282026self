@@ -37,10 +37,11 @@ public class ItemOrderDetails {
 	@JsonIgnore
 	private ItemOrder itemOrder;
 	
+	/*
 	public void setItemValue() {
 		this.itemValue = qty * item.getItemPrice();
 	}
 	public double getItemValue() {
 		return qty * item.getItemPrice();
-	}
+	}*/
 }

@@ -1,6 +1,5 @@
 package com.code.api.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.code.api.entity.ItemOrderDetails;
@@ -17,6 +16,7 @@ public class OrderRequestDTO {
     private Users users;
     private List<ItemOrderDetails> itemOrderDetailsList;
     
+    /*
     public void setTotalAmount() {
 		double tempTotalAmount = 0;
 		if (itemOrderDetailsList != null && itemOrderDetailsList.size() > 0) {
@@ -35,5 +35,5 @@ public class OrderRequestDTO {
 			}
 		}
 		return tempTotalAmount;
-	}
+	}*/
 }

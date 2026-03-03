@@ -1,7 +1,7 @@
 package com.code.api.service;
 
 import java.util.List;
-
+import java.util.Optional;
 
 import com.code.api.entity.ItemOrderDetails;
 
@@ -14,4 +14,5 @@ public interface IItemOrderDetailsService {
 	public List<ItemOrderDetails> getAll();
 	//public List<ItemOrderDetails> getByOrderId(int id);
 	public ItemOrderDetails getById(int id);
+	public Optional<ItemOrderDetails> getOrderDetailsAndItemById(int id);
 }
