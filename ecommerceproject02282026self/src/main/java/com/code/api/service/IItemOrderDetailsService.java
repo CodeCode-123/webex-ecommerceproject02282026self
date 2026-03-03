@@ -12,6 +12,6 @@ public interface IItemOrderDetailsService {
 	public String delete(int id);
 	//create some method to get the student
 	public List<ItemOrderDetails> getAll();
-	public List<ItemOrderDetails> getByOrderId(int id);
+	//public List<ItemOrderDetails> getByOrderId(int id);
 	public ItemOrderDetails getById(int id);
 }

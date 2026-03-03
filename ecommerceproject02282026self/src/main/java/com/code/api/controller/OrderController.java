@@ -1,16 +1,18 @@
 package com.code.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
 import com.code.api.service.*;
-import com.code.api.dto.CartItems;
 import com.code.api.dto.OrderRequestDTO;
 import com.code.api.entity.*;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
 
 @RestController
 @RequestMapping("/api/orders")
@@ -22,6 +24,7 @@ public class OrderController {
 	@Autowired
 	private IItemOrderDetailsService itemOrderDetailsService;
 	
+	
 	@GetMapping("/")
 	public List<ItemOrder> getAllOrders() {
 		return itemOrderService.getAll();
@@ -30,19 +33,63 @@ public class OrderController {
 	public ItemOrder getOrderById(@PathVariable("id") int id) {
 		return itemOrderService.getById(id);
 	}
-	@PostMapping("/create")
-	public ItemOrder createOrder(@RequestBody ItemOrder itemOrder) {
-		return itemOrderService.add(itemOrder);
+	@PostMapping("/placeorder") // create an order with items and users
+	public ResponseEntity<ItemOrder> placeOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
+		Users users = null;
+		if (orderRequestDTO.getUsers() != null && orderRequestDTO.getUsers().getId() > 0) {
+			int userId = orderRequestDTO.getUsers().getId();
+			users = userService.getUserById(userId);
+			if (users != null) {
+				System.out.println("User id: " + userId);
+			}
+		}
+		ItemOrder order = new ItemOrder();
+		if (users == null) {
+			return ResponseEntity.ok(order);
+		}
+		LocalDateTime nowTime = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		String formattedDate = nowTime.format(formatter);
+		order.setOrderDate(formattedDate);
+		System.out.println("Order date: " + order.getOrderDate());
+		order.setUsers(users);
+		order.setTotalAmount();
+		itemOrderService.add(order);
+		if (orderRequestDTO.getItemOrderDetailsList() != null 
+				&& orderRequestDTO.getItemOrderDetailsList().size() > 0) {
+			List<ItemOrderDetails> itemOrderDetailsList = new ArrayList<>();
+			int tempId = 0;
+			ItemOrderDetails tempDetails = null;
+			int tempQty = 0;
+			double tempPrice = 0;
+			int tempTotal = 0;
+			for (ItemOrderDetails details: orderRequestDTO.getItemOrderDetailsList()) {
+				tempId = details.getItemOrderDetailsId();
+				tempDetails = itemOrderDetailsService.getById(tempId);
+				if (tempDetails != null) {
+					itemOrderDetailsList.add(tempDetails);
+					tempQty = tempDetails.getQty();
+					tempPrice = tempDetails.getItem().getItemPrice();
+					tempTotal += tempQty * tempPrice;
+				}
+			}
+			order.setItemOrderDetailsList(itemOrderDetailsList);
+			order.setTotalAmount(tempTotal);
+			itemOrderService.update(order);
+		}
+		return ResponseEntity.ok(order);
 	}
+	/*
 	@PutMapping("/edit")
 	public ItemOrder editOrder(@RequestBody ItemOrder itemOrder) {
 		return itemOrderService.update(itemOrder);
-	}
+	}*/
 	@DeleteMapping("/delete/{id}")
 	public String deleteOrder(@PathVariable("id") int id) {
 		return itemOrderService.delete(id);
 	}
-	@PostMapping("placeholder") // create an order with items
+    /*
+	@PostMapping("/placeorder") // create an order with items
 	public ResponseEntity<ItemOrder> placeOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
 		System.out.println("User id: " + orderRequestDTO.getUserId());
 		int userId = orderRequestDTO.getUserId();
@@ -70,7 +117,5 @@ public class OrderController {
 			itemOrderDetailsService.add(detail);
 		}
 		return ResponseEntity.ok(order);
-	}
-	
-
+	}*/
 }

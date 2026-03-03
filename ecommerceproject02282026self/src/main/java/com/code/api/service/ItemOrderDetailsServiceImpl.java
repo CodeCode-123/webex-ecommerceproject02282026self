@@ -65,10 +65,11 @@ public class ItemOrderDetailsServiceImpl implements IItemOrderDetailsService {
 		return itemOrderDetails;
 	}
 
+	/*
 	@Override
 	public List<ItemOrderDetails> getByOrderId(int id) {
 		// TODO Auto-generated method stub
-		return orderDetailsRepository.findByItemOrderId(id);
-	}
+		return orderDetailsRepository.findByOrderId(id);
+	}*/
 
 }

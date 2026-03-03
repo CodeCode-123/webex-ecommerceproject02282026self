@@ -9,5 +9,5 @@ import com.code.api.entity.ItemOrderDetails;
 
 @Repository
 public interface IOrderDetailsRepository extends JpaRepository<ItemOrderDetails, Integer>{
-	List<ItemOrderDetails> findByItemOrderId(int orderId);
+	//List<ItemOrderDetails> findByOrderId(int orderId);
 }

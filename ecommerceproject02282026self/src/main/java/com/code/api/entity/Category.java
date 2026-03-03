@@ -20,9 +20,9 @@ public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "category_id")
-	int categoryId;
+	private int categoryId;
 	@Column(name = "category_name", length = 50, nullable = false, unique = true)
-	String categoryName;
+	private String categoryName;
 	@Column(name = "category_desc", length = 50, nullable = false)
-	String categoryDesc;
+	private String categoryDesc;
 }
