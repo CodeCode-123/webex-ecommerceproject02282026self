@@ -92,14 +92,23 @@ RequestBody:
     "itemName": "Cheese Burger",
     "itemPrice": 8
 }<br>
-6. Name: UpdateItemById,
+6. Name: UpdateItemById, (update itemName),
 Method: PATCH,
 Url: http://localhost:8185/api/item/edit/2,
 RequestBody: 
 {
     "itemName": "Double Cheese Burger"
-}
-7. Name: DeleteItem,
+}<br>
+7. Name: UpdateItemById, (update category by categoryId),
+Method: PATCH,
+Url: http://localhost:8185/api/item/edit/1,
+RequestBody: 
+{
+    "category": {
+        "categoryId": 2
+    }
+}<br>
+8. Name: DeleteItem,
 Method: DELETE,
 Url: http://localhost:8185/api/item/delete/2<br>
 
@@ -189,17 +198,24 @@ RequestBody:
     "itemValue": 20.0,
     "qty": 2
 }<br>
-5. Name: UpdateOrderDetailsById,
+5. Name: UpdateOrderDetailsById, (only update qty),
 Method: PATCH,
 Url: http://localhost:8185/api/orderdetails/edit/1, 
 RequestBody: 
 {
-    "item": {
-        "itemId": 1
-    },
     "qty": 3
-}
-6. Name: DeleteOrderDetailsById,
+}<br>
+6. Name: UpdateOrderDetailsById, (update both item and qty),
+Method: PATCH,
+Url: http://localhost:8185/api/orderdetails/edit/1,
+RequestBody:
+{
+    "item": {
+        "itemId": 2
+    },
+    "qty": 5
+}<br>
+7. Name: DeleteOrderDetailsById,
 Method: DELETE,
 Url: http://localhost:8185/api/orderdetails/delete/1<br>
 
