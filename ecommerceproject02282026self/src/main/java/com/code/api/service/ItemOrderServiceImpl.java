@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.code.api.repository.*;
 import com.code.api.entity.ItemOrder;
+import com.code.api.entity.ItemOrderDetails;
 @Service
 @Transactional
 public class ItemOrderServiceImpl implements IItemOrderService {
@@ -60,6 +61,12 @@ public class ItemOrderServiceImpl implements IItemOrderService {
 			itemOrder = itemOrderOptional.get();
 		}
 		return itemOrder;
+	}
+
+	@Override
+	public List<ItemOrderDetails> findOrderAndItemOrderDetailsById(int orderId) {
+		// TODO Auto-generated method stub
+		return ordersRepository.findOrderAndItemOrderDetailsById(orderId);
 	}
 
 }

@@ -47,12 +47,12 @@ public class OrderController {
 		if (users == null) {
 			return ResponseEntity.ok(order);
 		}
+		order.setUsers(users);
 		LocalDateTime nowTime = LocalDateTime.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		String formattedDate = nowTime.format(formatter);
 		order.setOrderDate(formattedDate);
 		System.out.println("Order date: " + order.getOrderDate());
-		order.setUsers(users);
 		//order.setTotalAmount();
 		itemOrderService.add(order);
 		if (orderRequestDTO.getItemOrderDetailsList() != null 
@@ -67,6 +67,7 @@ public class OrderController {
 				tempId = details.getItemOrderDetailsId();
 				tempDetails = itemOrderDetailsService.getById(tempId);
 				if (tempDetails != null) {
+					tempDetails.setItemOrder(order);
 					itemOrderDetailsList.add(tempDetails);
 					tempQty = tempDetails.getQty();
 					tempPrice = tempDetails.getItem().getItemPrice();
