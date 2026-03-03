@@ -37,7 +37,14 @@ RequestBody:
     "categoryName": "Burger",
     "categoryDesc": "Double Cheese Burger"
 }<br>
-7. Name: DeleteCategoryById,
+7. Name: UpdateCategoryById,
+Method: PATCH,
+Url: http://localhost:8185/api/category/edit/2,
+RequestBody:
+{
+    "categoryDesc": "Double Cheese Burger"
+}
+8. Name: DeleteCategoryById,
 Method: DELETE,
 Url: http://localhost:8185/api/category/delete/2<br>
 
@@ -47,18 +54,22 @@ Method: POST,
 Url: http://localhost:8185/api/item/create,
 RequestBody: 
 {
-    "itemId": 0,
     "itemName": "Cheese Pizza",
-    "itemPrice": 10
+    "itemPrice": 10,
+    "category": {
+        "categoryId": 1
+    }
 } <br>
 2. Name: CreateItem,
 Method: POST,
 Url: http://localhost:8185/api/item/create,
 RequestBody:
 {
-    "itemId": 0,
     "itemName": "Cheese Burger",
-    "itemPrice": 6
+    "itemPrice": 6,
+    "category": {
+        "categoryId": 2
+    }
 } <br>
 3. Name: GetAllItems,
 Method: GET,
@@ -71,11 +82,24 @@ Method: PUT,
 Url: http://localhost:8185/api/item/edit,
 RequestBody:
 {
+    "category": {
+        "categoryDesc": "Cheese Burger",
+        "categoryId": 2,
+        "categoryName": "Burger"
+    },
+    "imageData": null,
     "itemId": 2,
-    "itemName": "Double Cheese Burger",
-    "itemPrice": 7
+    "itemName": "Cheese Burger",
+    "itemPrice": 8
 }<br>
-6. Name: DeleteItem,
+6. Name: UpdateItemById,
+Method: PATCH,
+Url: http://localhost:8185/api/item/edit/2,
+RequestBody: 
+{
+    "itemName": "Double Cheese Burger"
+}
+7. Name: DeleteItem,
 Method: DELETE,
 Url: http://localhost:8185/api/item/delete/2<br>
 
@@ -114,57 +138,16 @@ RequestBody:
     "lastName": "Doe",
     "password": "password"
 }<br>
-5. Name: DeleteUsers,
+5. Name: UpdateUsersById,
+Method: PATCH,
+Url: http://localhost:8185/api/users/edit/1,
+RequestBody: {
+    "firstName": "John edit",
+    "lastName": "Doe edit"
+}
+6. Name: DeleteUsers,
 Method: DELETE,
 Url: http://localhost:8185/api/users/delete/1<br>
-
-### Orders:
-1. Name: CreateOrders, (ensure that there is a user with id=1 in the database, get the users's information during retrieving),
-Method: POST,
-Url: http://localhost:8185/api/orders/create,
-RequestBody: 
-{
-    "oderId": 0,
-    "orderDate": "03-02-2026",
-    "totalAmount": 20,
-    "users": {
-        "id": 1
-    }
-} <br>
-2. Name: GetAllOrders,
-Method: GET,
-Url: http://localhost:8185/api/orders/ <br>
-3. Name: GetOrdersById,
-Method: GET,
-Url: http://localhost:8185/api/orders/1 <br>
-4. Name: UpdateOrders, (don't miss any fields; this is a PUT method)
-Method: PUT,
-Url: http://localhost:8185/api/orders/edit,
-RequestBody:
-{
-    "orderDate": "03-02-2026",
-    "orderId": 1,
-    "totalAmount": 30.0,
-    "users": {
-        "country": "United Kingdom",
-        "emailId": "john.doe@abc.com",
-        "firstName": "John",
-        "gender": "male",
-        "id": 1,
-        "imageData": null,
-        "languages": [
-            "C",
-            "C#",
-            "Java"
-        ],
-        "lastName": "Doe",
-        "password": "password",
-        "role": "Customer"
-    }
-}<br>
-5. Name: DeleteOrdersById,
-Method: DELETE,
-Url: http://localhost:8185/api/orders/delete/1<br>
 
 ### OrderDetails:
 1. Name: CreateOrderDetails,
@@ -172,14 +155,12 @@ Method: POST,
 Url: http://localhost:8185/api/orderdetails/create,
 RequestBody: 
 {
-    "itemOrderId": 0,
-    "productName": "Cheese Pizza",
-    "categoryName": "Pizza",
-    "price": 10,
-    "qty": 2,
-    "itemValue": 20,
-    "itemOrder": {
-        "orderId": 1
+    "item": {
+        "itemId": 1
+    },
+    "qty": 1,
+    "itemOrder":{
+        "orderId": 0
     }
 }<br>
 2. Name: GetAllOrderDetails,
@@ -193,34 +174,58 @@ Method: PUT,
 Url: http://localhost:8185/api/orderdetails/edit,
 RequestBody:
 {
-    "categoryName": "Pizza",
-    "itemOrder": {
-        "orderDate": "03-02-2026",
-        "orderId": 1,
-        "totalAmount": 30.0,
-        "users": {
-            "country": "United Kingdom",
-            "emailId": "john.doe@abc.com",
-            "firstName": "John",
-            "gender": "male",
-            "id": 1,
-            "imageData": null,
-            "languages": [
-                "C",
-                "C#",
-                "Java"
-            ],
-            "lastName": "Doe",
-            "password": "password",
-            "role": "Customer"
-        }
+    "item": {
+        "category": {
+            "categoryDesc": "Cheese Pizza",
+            "categoryId": 1,
+            "categoryName": "Pizza"
+        },
+        "imageData": null,
+        "itemId": 1,
+        "itemName": "Cheese Pizza",
+        "itemPrice": 10
     },
-    "itemOrderId": 1,
-    "itemValue": 30.0,
-    "price": 10.0,
-    "productName": "Cheese Pizza",
-    "qty": 3
+    "itemOrderDetailsId": 1,
+    "itemValue": 20.0,
+    "qty": 2
 }<br>
-5. Name: DeleteOrderDetailsById,
+5. Name: UpdateOrderDetailsById,
+Method: PATCH,
+Url: http://localhost:8185/api/orderdetails/edit/1, 
+RequestBody: 
+{
+    "item": {
+        "itemId": 1
+    },
+    "qty": 3
+}
+6. Name: DeleteOrderDetailsById,
 Method: DELETE,
 Url: http://localhost:8185/api/orderdetails/delete/1<br>
+
+### Orders:
+1. Name: PlaceOrders, (ensure that there is a user with id=1 and an item order details with itemOrderDetailsId=1 in the database, get the users' information and item order details' information during retrieving),
+Method: POST,
+Url: http://localhost:8185/api/orders/placeorder,
+RequestBody: 
+{
+    "orderDate": "03-02-2026",
+    "users":{
+        "id": 1
+    },
+    "itemOrderDetailsList": [
+        {
+            "itemOrderDetailsId": 1
+        }
+    ]
+}<br>
+2. Name: GetAllOrders,
+Method: GET,
+Url: http://localhost:8185/api/orders/ <br>
+3. Name: GetOrdersById,
+Method: GET,
+Url: http://localhost:8185/api/orders/1 <br>
+4. Name: DeleteOrdersById,
+Method: DELETE,
+Url: http://localhost:8185/api/orders/delete/1<br>
+
