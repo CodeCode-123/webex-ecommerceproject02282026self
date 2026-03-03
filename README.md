@@ -43,7 +43,7 @@ Url: http://localhost:8185/api/category/edit/2,
 RequestBody:
 {
     "categoryDesc": "Double Cheese Burger"
-}
+}<br>
 8. Name: DeleteCategoryById,
 Method: DELETE,
 Url: http://localhost:8185/api/category/delete/2<br>
@@ -153,7 +153,7 @@ Url: http://localhost:8185/api/users/edit/1,
 RequestBody: {
     "firstName": "John edit",
     "lastName": "Doe edit"
-}
+}<br>
 6. Name: DeleteUsers,
 Method: DELETE,
 Url: http://localhost:8185/api/users/delete/1<br>
@@ -172,13 +172,26 @@ RequestBody:
         "orderId": 0
     }
 }<br>
-2. Name: GetAllOrderDetails,
+2. Name: CreateOrderDetails, (created an itemOrderDetails with another item)
+Method: POST,
+Url: http://localhost:8185/api/orderdetails/create,
+RequestBody:
+{
+    "item": {
+        "itemId": 2
+    },
+    "qty": 1,
+    "itemOrder":{
+        "orderId": 0
+    }
+}<br>
+3. Name: GetAllOrderDetails,
 Method: GET,
 Url: http://localhost:8185/api/orderdetails/ <br>
-3. Name: GetOrderDetailsById,
+4. Name: GetOrderDetailsById,
 Method: GET,
 Url: http://localhost:8185/api/orderdetails/1 <br>
-4. Name: UpdateOrderDetails, 
+5. Name: UpdateOrderDetails, 
 Method: PUT,
 Url: http://localhost:8185/api/orderdetails/edit,
 RequestBody:
@@ -198,24 +211,21 @@ RequestBody:
     "itemValue": 20.0,
     "qty": 2
 }<br>
-5. Name: UpdateOrderDetailsById, (only update qty),
+6. Name: UpdateOrderDetailsById, (only update qty),
 Method: PATCH,
 Url: http://localhost:8185/api/orderdetails/edit/1, 
 RequestBody: 
 {
     "qty": 3
 }<br>
-6. Name: UpdateOrderDetailsById, (update both item and qty),
+7. Name: UpdateOrderDetailsById, (only update qty),
 Method: PATCH,
-Url: http://localhost:8185/api/orderdetails/edit/1,
-RequestBody:
+Url: http://localhost:8185/api/orderdetails/edit/2, 
+RequestBody: 
 {
-    "item": {
-        "itemId": 2
-    },
     "qty": 5
 }<br>
-7. Name: DeleteOrderDetailsById,
+8. Name: DeleteOrderDetailsById,
 Method: DELETE,
 Url: http://localhost:8185/api/orderdetails/delete/1<br>
 
@@ -225,13 +235,29 @@ Method: POST,
 Url: http://localhost:8185/api/orders/placeorder,
 RequestBody: 
 {
-    "orderDate": "03-02-2026",
     "users":{
         "id": 1
     },
     "itemOrderDetailsList": [
         {
             "itemOrderDetailsId": 1
+        }
+    ]
+}<br>
+2. Name: PlaceOrders, (with multiple itemOrderDetails),
+Method: POST,
+Url: http://localhost:8185/api/orders/placeorder,
+RequestBody: 
+{
+    "users":{
+        "id": 1
+    },
+    "itemOrderDetailsList": [
+        {
+            "itemOrderDetailsId": 1
+        },
+        {
+            "itemOrderDetailsId": 2
         }
     ]
 }<br>
