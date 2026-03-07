@@ -28,6 +28,10 @@ public class UsersController {
 	public Users getUserByEmailId(@PathVariable String emailId) {
 		return userService.getUserByEmailId(emailId);
 	}
+	@PostMapping("/login")
+	public Users userLogin(@RequestParam("emailId") String emailId, @RequestParam("password") String password) {
+		return userService.getUserByEmailId(emailId, password);
+	}
 	@PostMapping("/create")
 	public Users createUsers(@RequestBody Users users) {
 		return userService.addUser(users);
