@@ -133,7 +133,13 @@ Url: http://localhost:8185/api/users/ <br>
 3. Name: GetUsersById,
 Method: GET,
 Url: http://localhost:8185/api/users/1 <br>
-4. Name: UpdateUsers, 
+4. Name: Login,
+Method: POST,
+Url: http://localhost:8185/api/users/login?emailId=john.doe@abc.com&password=password <br>
+5. Name: GetUserByEmailId,
+Method: GET,
+Url: http://localhost:8185/api/users/search/john.doe@abc.com <br>
+6. Name: UpdateUsers, 
 Method: PUT,
 Url: http://localhost:8185/api/users/edit,
 RequestBody:
@@ -147,14 +153,14 @@ RequestBody:
     "lastName": "Doe",
     "password": "password"
 }<br>
-5. Name: UpdateUsersById,
+7. Name: UpdateUsersById,
 Method: PATCH,
 Url: http://localhost:8185/api/users/edit/1,
 RequestBody: {
     "firstName": "John edit",
     "lastName": "Doe edit"
 }<br>
-6. Name: DeleteUsers,
+8. Name: DeleteUsers,
 Method: DELETE,
 Url: http://localhost:8185/api/users/delete/1<br>
 
