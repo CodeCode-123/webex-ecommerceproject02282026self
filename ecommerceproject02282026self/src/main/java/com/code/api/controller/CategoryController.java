@@ -43,7 +43,7 @@ public class CategoryController {
 	}
 	@GetMapping(value="/search/{catname}")
 	public List<Category> search(@PathVariable("catname") String catname) {
-		Category dbCategory = categoryService.getCategoryByName(catname);
+		List<Category> dbCategory = categoryService.search(catname);
 		if (dbCategory == null) {
 			throw new ResourceNotFoundException("Category", "categoryName", catname);
 		}
