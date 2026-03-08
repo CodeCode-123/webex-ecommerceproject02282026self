@@ -1,9 +1,31 @@
 # webex-ecommerceproject02282026self
-## Postman test cases:
+## Postman test cases: 
+If the method is not POST, and the URL does not start with http://localhost:8185/api/auth/, http://localhost:8185/api/category/, http://localhost:8185/api/item/, or http://localhost:8185/api/users/,
+please use the token generated during the login to fill the blank of Bear Token in the Authorization field Auth Type. 
+### Authentication:
+1. Name: Signup, (please drop all the tables, especially the Users, if the entity constraints are different)
+Method: POST,
+URL: http://localhost:8185/api/auth/signup,
+RequestBody: 
+{
+    "firstName": "test1",
+    "lastName": "test1",
+    "email": "test1@abc.com",
+    "password": "1234"
+} <br>
+2. Name: Login, (response entity will provide the generated token for authorization)
+Method: POST,
+URL: http://localhost:8185/api/auth/login,
+RequestBody:
+{
+    "email": "test1@abc.com",
+    "password": "1234"
+} <br>
+
 ### Category:
 1. Name: CreateCategory,
 Method: POST,
-Url: http://localhost:8185/api/category/create,
+URL: http://localhost:8185/api/category/create,
 RequestBody: 
 {
     "categoryId": 0,
@@ -12,25 +34,25 @@ RequestBody:
 } <br>
 2. Name: CreateCategory,
 Method: POST,
-Url: http://localhost:8185/api/category/create,
+URL: http://localhost:8185/api/category/create,
 RequestBody:
 {
     "categoryId": 0,
     "categoryName": "Burger",
     "categoryDesc": "Cheese Burger"
 } <br>
-3. Name: GetAllCategories,
+3. Name: GetAllCategories, (please use the token generated in the Login)
 Method: GET,
-Url: http://localhost:8185/api/category/<br>
+URL: http://localhost:8185/api/category/<br>
 4. Name: GetCategoryById,
 Method: GET,
-Url: http://localhost:8185/api/category/1<br>
+URL: http://localhost:8185/api/category/1<br>
 5. Name: GetCategoryByName, 
 Method: GET,
-Url: http://localhost:8185/api/category/search/P<br>
+URL: http://localhost:8185/api/category/search/P<br>
 6. Name: UpdateCategory, 
 Method: PUT,
-Url: http://localhost:8185/api/category/edit,
+URL: http://localhost:8185/api/category/edit,
 RequestBody:
 {
     "categoryId": 2,
@@ -39,19 +61,19 @@ RequestBody:
 }<br>
 7. Name: UpdateCategoryById,
 Method: PATCH,
-Url: http://localhost:8185/api/category/edit/2,
+URL: http://localhost:8185/api/category/edit/2,
 RequestBody:
 {
     "categoryDesc": "Double Cheese Burger"
 }<br>
 8. Name: DeleteCategoryById,
 Method: DELETE,
-Url: http://localhost:8185/api/category/delete/2<br>
+URL: http://localhost:8185/api/category/delete/2<br>
 
 ### Item:
 1. Name: CreateItem,
 Method: POST,
-Url: http://localhost:8185/api/item/create,
+URL: http://localhost:8185/api/item/create,
 RequestBody: 
 {
     "itemName": "Cheese Pizza",
@@ -62,7 +84,7 @@ RequestBody:
 } <br>
 2. Name: CreateItem,
 Method: POST,
-Url: http://localhost:8185/api/item/create,
+URL: http://localhost:8185/api/item/create,
 RequestBody:
 {
     "itemName": "Cheese Burger",
@@ -73,13 +95,13 @@ RequestBody:
 } <br>
 3. Name: GetAllItems,
 Method: GET,
-Url: http://localhost:8185/api/item/<br>
+URL: http://localhost:8185/api/item/<br>
 4. Name: GetItemById,
 Method: GET,
-Url: http://localhost:8185/api/item/1<br>
+URL: http://localhost:8185/api/item/1<br>
 5. Name: UpdateItem, 
 Method: PUT,
-Url: http://localhost:8185/api/item/edit,
+URL: http://localhost:8185/api/item/edit,
 RequestBody:
 {
     "category": {
@@ -94,14 +116,14 @@ RequestBody:
 }<br>
 6. Name: UpdateItemById, (update itemName),
 Method: PATCH,
-Url: http://localhost:8185/api/item/edit/2,
+URL: http://localhost:8185/api/item/edit/2,
 RequestBody: 
 {
     "itemName": "Double Cheese Burger"
 }<br>
 7. Name: UpdateItemById, (update category by categoryId),
 Method: PATCH,
-Url: http://localhost:8185/api/item/edit/1,
+URL: http://localhost:8185/api/item/edit/1,
 RequestBody: 
 {
     "category": {
@@ -110,12 +132,12 @@ RequestBody:
 }<br>
 8. Name: DeleteItem,
 Method: DELETE,
-Url: http://localhost:8185/api/item/delete/2<br>
+URL: http://localhost:8185/api/item/delete/2<br>
 
 ### Users:
 1. Name: CreateUsers,
 Method: POST,
-Url: http://localhost:8185/api/users/create,
+URL: http://localhost:8185/api/users/create,
 RequestBody: 
 {
     "id": 0,
@@ -129,19 +151,19 @@ RequestBody:
 } <br>
 2. Name: GetAllUsers,
 Method: GET,
-Url: http://localhost:8185/api/users/ <br>
+URL: http://localhost:8185/api/users/ <br>
 3. Name: GetUsersById,
 Method: GET,
-Url: http://localhost:8185/api/users/1 <br>
+URL: http://localhost:8185/api/users/1 <br>
 4. Name: Login,
 Method: POST,
-Url: http://localhost:8185/api/users/login?emailId=john.doe@abc.com&password=password <br>
+URL: http://localhost:8185/api/users/login?emailId=john.doe@abc.com&password=password <br>
 5. Name: GetUserByEmailId,
 Method: GET,
-Url: http://localhost:8185/api/users/search/john.doe@abc.com <br>
+URL: http://localhost:8185/api/users/search/john.doe@abc.com <br>
 6. Name: UpdateUsers, 
 Method: PUT,
-Url: http://localhost:8185/api/users/edit,
+URL: http://localhost:8185/api/users/edit,
 RequestBody:
 {
     "id": 1,
@@ -155,19 +177,19 @@ RequestBody:
 }<br>
 7. Name: UpdateUsersById,
 Method: PATCH,
-Url: http://localhost:8185/api/users/edit/1,
+URL: http://localhost:8185/api/users/edit/1,
 RequestBody: {
     "firstName": "John edit",
     "lastName": "Doe edit"
 }<br>
 8. Name: DeleteUsers,
 Method: DELETE,
-Url: http://localhost:8185/api/users/delete/1<br>
+URL: http://localhost:8185/api/users/delete/1<br>
 
 ### OrderDetails:
 1. Name: CreateOrderDetails,
 Method: POST,
-Url: http://localhost:8185/api/orderdetails/create,
+URL: http://localhost:8185/api/orderdetails/create,
 RequestBody: 
 {
     "item": {
@@ -180,7 +202,7 @@ RequestBody:
 }<br>
 2. Name: CreateOrderDetails, (created an itemOrderDetails with another item)
 Method: POST,
-Url: http://localhost:8185/api/orderdetails/create,
+URL: http://localhost:8185/api/orderdetails/create,
 RequestBody:
 {
     "item": {
@@ -193,13 +215,13 @@ RequestBody:
 }<br>
 3. Name: GetAllOrderDetails,
 Method: GET,
-Url: http://localhost:8185/api/orderdetails/ <br>
+URL: http://localhost:8185/api/orderdetails/ <br>
 4. Name: GetOrderDetailsById,
 Method: GET,
-Url: http://localhost:8185/api/orderdetails/1 <br>
+URL: http://localhost:8185/api/orderdetails/1 <br>
 5. Name: UpdateOrderDetails, 
 Method: PUT,
-Url: http://localhost:8185/api/orderdetails/edit,
+URL: http://localhost:8185/api/orderdetails/edit,
 RequestBody:
 {
     "item": {
@@ -219,26 +241,26 @@ RequestBody:
 }<br>
 6. Name: UpdateOrderDetailsById, (only update qty),
 Method: PATCH,
-Url: http://localhost:8185/api/orderdetails/edit/1, 
+URL: http://localhost:8185/api/orderdetails/edit/1, 
 RequestBody: 
 {
     "qty": 3
 }<br>
 7. Name: UpdateOrderDetailsById, (only update qty),
 Method: PATCH,
-Url: http://localhost:8185/api/orderdetails/edit/2, 
+URL: http://localhost:8185/api/orderdetails/edit/2, 
 RequestBody: 
 {
     "qty": 5
 }<br>
 8. Name: DeleteOrderDetailsById,
 Method: DELETE,
-Url: http://localhost:8185/api/orderdetails/delete/1<br>
+URL: http://localhost:8185/api/orderdetails/delete/1<br>
 
 ### Orders:
 1. Name: PlaceOrders, (ensure that there is a user with id=1 and an item order details with itemOrderDetailsId=1 in the database, get the users' information and item order details' information during retrieving),
 Method: POST,
-Url: http://localhost:8185/api/orders/placeorder,
+URL: http://localhost:8185/api/orders/placeorder,
 RequestBody: 
 {
     "users":{
@@ -252,7 +274,7 @@ RequestBody:
 }<br>
 2. Name: PlaceOrders, (with multiple itemOrderDetails),
 Method: POST,
-Url: http://localhost:8185/api/orders/placeorder,
+URL: http://localhost:8185/api/orders/placeorder,
 RequestBody: 
 {
     "users":{
@@ -269,11 +291,11 @@ RequestBody:
 }<br>
 2. Name: GetAllOrders,
 Method: GET,
-Url: http://localhost:8185/api/orders/ <br>
+URL: http://localhost:8185/api/orders/ <br>
 3. Name: GetOrdersById,
 Method: GET,
-Url: http://localhost:8185/api/orders/1 <br>
+URL: http://localhost:8185/api/orders/1 <br>
 4. Name: DeleteOrdersById,
 Method: DELETE,
-Url: http://localhost:8185/api/orders/delete/1<br>
+URL: http://localhost:8185/api/orders/delete/1<br>
 
