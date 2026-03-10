@@ -1,5 +1,7 @@
 package com.code.api;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -14,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.code.api.entity.Users;
 import com.code.api.repository.IUsersRepository;
@@ -21,11 +24,9 @@ import com.code.api.service.UserServiceImpl;
 
 @SpringBootTest(classes = Ecommerceproject02282026selfApplication.class)
 public class UserServiceTest {
-	@Autowired
-	ApplicationContext applicationContext;
-	@Mock
+	@MockitoBean
 	private IUsersRepository usersRepository;
-	@InjectMocks
+	@Autowired
 	private UserServiceImpl userService;
 	@Autowired
 	Users userOne;
@@ -57,6 +58,7 @@ public class UserServiceTest {
 		when(usersRepository.findById(1)).thenReturn(Optional.of(userOne));
 		assertSame(userOne, userService.getUserById(1));
 		assertEquals(userOne.getEmailId(), userService.getUserById(1).getEmailId());
+		verify(usersRepository, times(2)).findById(1);
 	}
 	
 	
@@ -65,11 +67,13 @@ public class UserServiceTest {
 		when(usersRepository.findByEmailId("admin@abc.com")).thenReturn(Optional.of(userOne));
 		assertSame(userOne, userService.getUserByEmailId("admin@abc.com"));
 		assertEquals(userOne.getId(), userService.getUserByEmailId("admin@abc.com").getId());
+		verify(usersRepository, times(2)).findByEmailId("admin@abc.com");
 	}
 	
 	@Test
 	void testGetAll() {
 		when(usersRepository.findAll()).thenReturn(List.of(userOne, userTwo));
 		assertEquals(List.of(userOne, userTwo), userService.getAll());
+		verify(usersRepository, times(1)).findAll();
 	}
 }

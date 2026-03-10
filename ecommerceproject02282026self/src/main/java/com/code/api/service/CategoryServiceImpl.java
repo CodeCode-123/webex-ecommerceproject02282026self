@@ -85,7 +85,7 @@ public class CategoryServiceImpl implements ICategoryService {
 	public List<Category> search(String catname) {
 		// TODO Auto-generated method stub
 		// return a List of Category with a category name pattern
-		return categoryRepository.findByCategoryNameLike("%" + catname + "%");
+		return categoryRepository.findByCategoryNameLike(catname);
 	}
 
 }
