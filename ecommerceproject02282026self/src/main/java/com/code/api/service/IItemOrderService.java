@@ -1,6 +1,7 @@
 package com.code.api.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.repository.query.Param;
 
@@ -12,8 +13,7 @@ public interface IItemOrderService {
 	public ItemOrder update(ItemOrder itemOrder);
 	public String delete(ItemOrder itemOrder);
 	public String delete(int id);
-	//create some method to get the student
 	public List<ItemOrder> getAll();
-	public ItemOrder getById(int id);
-	public List<ItemOrderDetails> findOrderAndItemOrderDetailsById(@Param("data") int orderId);
+	public Optional<ItemOrder> getById(int id);
+	public Optional<ItemOrder> getOrderAndItemOrderDetailsById(@Param("data") int orderId);
 }

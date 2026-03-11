@@ -75,8 +75,8 @@ public class ItermOrderDetailsServiceTest {
 	void getOrderDetailsById() {
 		when(orderDetailsRepository.findById(1)).thenReturn(Optional.of(itemOrderDetailsOne));
 		when(orderDetailsRepository.findById(2)).thenReturn(Optional.of(itemOrderDetailsTwo));
-		assertSame(itemOrderDetailsOne, orderDetailsService.getById(1));
-		assertSame(itemOrderDetailsTwo, orderDetailsService.getById(2));
+		assertSame(itemOrderDetailsOne, orderDetailsService.getById(1).get());
+		assertSame(itemOrderDetailsTwo, orderDetailsService.getById(2).get());
 		verify(orderDetailsRepository, times(1)).findById(1);
 		verify(orderDetailsRepository, times(1)).findById(2);
 	}

@@ -10,9 +10,7 @@ public interface IItemOrderDetailsService {
 	public ItemOrderDetails update(ItemOrderDetails itemOrder);
 	public String delete(ItemOrderDetails itemOrder);
 	public String delete(int id);
-	//create some method to get the student
 	public List<ItemOrderDetails> getAll();
-	//public List<ItemOrderDetails> getByOrderId(int id);
-	public ItemOrderDetails getById(int id);
+	public Optional<ItemOrderDetails> getById(int id);
 	public Optional<ItemOrderDetails> getOrderDetailsAndItemById(int id);
 }

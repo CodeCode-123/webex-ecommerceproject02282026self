@@ -53,18 +53,19 @@ public class ItemOrderServiceImpl implements IItemOrderService {
 	}
 
 	@Override
-	public ItemOrder getById(int id) {
+	public Optional<ItemOrder> getById(int id) {
 		// TODO Auto-generated method stub
-		Optional<ItemOrder> itemOrderOptional = ordersRepository.findById(id);
-		ItemOrder itemOrder = null;
-		if (itemOrderOptional.isPresent()) {
-			itemOrder = itemOrderOptional.get();
-		}
-		return itemOrder;
+		return ordersRepository.findById(id);
+//		Optional<ItemOrder> itemOrderOptional = ordersRepository.findById(id);
+//		ItemOrder itemOrder = null;
+//		if (itemOrderOptional.isPresent()) {
+//			itemOrder = itemOrderOptional.get();
+//		}
+//		return itemOrder;
 	}
 
 	@Override
-	public List<ItemOrderDetails> findOrderAndItemOrderDetailsById(int orderId) {
+	public Optional<ItemOrder> getOrderAndItemOrderDetailsById(int orderId) {
 		// TODO Auto-generated method stub
 		return ordersRepository.findOrderAndItemOrderDetailsById(orderId);
 	}

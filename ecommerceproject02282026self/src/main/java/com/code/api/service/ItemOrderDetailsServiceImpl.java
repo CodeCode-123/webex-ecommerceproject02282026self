@@ -55,16 +55,16 @@ public class ItemOrderDetailsServiceImpl implements IItemOrderDetailsService {
 	}
 
 	@Override
-	public ItemOrderDetails getById(int id) {
-		// TODO Auto-generated method stub
-		// find by Id
-		Optional<ItemOrderDetails> itemOrderDetailsOptional = orderDetailsRepository.findById(id);
-		ItemOrderDetails itemOrderDetails = null;
-		// check if the category is present or not
-		if (itemOrderDetailsOptional.isPresent()) {
-			itemOrderDetails = itemOrderDetailsOptional.get();
-		}
-		return itemOrderDetails;
+	public Optional<ItemOrderDetails> getById(int id) {
+		return orderDetailsRepository.findById(id);
+//		// find by Id
+//		Optional<ItemOrderDetails> itemOrderDetailsOptional = orderDetailsRepository.findById(id);
+//		ItemOrderDetails itemOrderDetails = null;
+//		// check if the category is present or not
+//		if (itemOrderDetailsOptional.isPresent()) {
+//			itemOrderDetails = itemOrderDetailsOptional.get();
+//		}
+//		return itemOrderDetails;
 	}
 
 	@Override
