@@ -23,69 +23,38 @@ public class CategoryServiceImpl implements ICategoryService {
 
 	@Override
 	public Category update(Category category) {
-		// TODO Auto-generated method stub
-	return categoryRepository.save(category);
+	    return categoryRepository.save(category);
 	}
 
-	@Override
-	public String delete(Category category) {
-		// TODO Auto-generated method stub
-	    categoryRepository.delete(category);
-	    return "Record is deleted successfully";
-	}
-
-	@Override
-	public String delete(int id) {
-		// TODO Auto-generated method stub
-		// Get the user with the id
-		Optional<Category> categoryOptional = categoryRepository.findById(id);
-		if (categoryOptional.isPresent()) {
-			// get the object and delete it
-			categoryRepository.delete(categoryOptional.get());
-			return "Record is deleted successfully";
-		}
-		return "Category with Id " + id + " not found";
-	}
-
+	
 	@Override
 	public List<Category> getAllCategories() {
-		// TODO Auto-generated method stub
 		return categoryRepository.findAll();
 	}
 
 	@Override
-	public Category getById(int id) {
-		// TODO Auto-generated method stub
-	    Optional<Category> categoryOptional = categoryRepository.findById(id);
-	    Category category = null;
-	    // check if the category is present or not 
-	    if (categoryOptional.isPresent()) {
-	    	// get the category object and return;
-	    	category = categoryOptional.get();
-	    } 
-	    return category;
+	public Optional<Category> getById(int id) {
+		return categoryRepository.findById(id);
 	}
 
 	@Override
-	public Category getCategoryByName(String catname)
-	{
-		// TODO Auto-generated method stub
-		// check if the category object is present or not
-		Optional<Category> categoryOptional = categoryRepository.findByCategoryName(catname);
-		Category category = null;
-		// check if the category object is present or not
-		if (categoryOptional.isPresent()) {
-			// get the category object and return
-			category = categoryOptional.get();
-		}
-		return category;
+	public Optional<Category> getCategoryByName(String catname){
+		return categoryRepository.findByCategoryName(catname);
 	}
 
 	@Override
 	public List<Category> search(String catname) {
-		// TODO Auto-generated method stub
-		// return a List of Category with a category name pattern
 		return categoryRepository.findByCategoryNameLike(catname);
+	}
+
+	@Override
+	public void delete(Category category) {
+		categoryRepository.delete(category);
+	}
+
+	@Override
+	public void deleteById(int id) {
+		categoryRepository.deleteById(id);
 	}
 
 }

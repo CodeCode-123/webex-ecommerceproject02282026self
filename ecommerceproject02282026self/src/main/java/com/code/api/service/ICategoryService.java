@@ -1,7 +1,7 @@
 package com.code.api.service;
 
 import java.util.List;
-
+import java.util.Optional;
 
 import com.code.api.entity.Category;
 
@@ -11,16 +11,16 @@ public interface ICategoryService {
 
 	public Category update(Category category);
 
-	public String delete(Category category);
+	public void delete(Category category);
 
-	public String delete(int id);
+	public void deleteById(int id);
 
 	// create some method to get the student
 	public List<Category> getAllCategories();
 
-	public Category getById(int id);
+	public Optional<Category> getById(int id);
 
-	public Category getCategoryByName(String catname);
+	public Optional<Category> getCategoryByName(String catname);
 
 	public List<Category> search(String catname);
 }

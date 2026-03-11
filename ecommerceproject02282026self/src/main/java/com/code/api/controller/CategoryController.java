@@ -1,6 +1,7 @@
 package com.code.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,11 +35,11 @@ public class CategoryController {
 	}
 	@GetMapping(value="/{id}")
 	public Category getCategoryById(@PathVariable int id) {
-		Category dbCategory = categoryService.getById(id);
+		Optional<Category> dbCategory = categoryService.getById(id);
 		if (dbCategory == null) {
 			throw new ResourceNotFoundException("Category", "categoryId", String.valueOf(id));
 		}
-		return categoryService.getById(id);
+		return categoryService.getById(id).get();
 		
 	}
 	@GetMapping(value="/search/{catname}")
@@ -59,24 +60,25 @@ public class CategoryController {
 	}
 	@PatchMapping(value="/edit/{id}")
 	public Category editCategoryById(@PathVariable("id") int id, @RequestBody CategoryDTO categoryDTO) {
-		Category dbCategory = categoryService.getById(id);
+		Optional<Category> dbCategory = categoryService.getById(id);
 		if (dbCategory == null) {
 			throw new ResourceNotFoundException("Category", "categoryId", String.valueOf(id));
 		}
 		if (categoryDTO.getCategoryName() != null && categoryDTO.getCategoryName().trim().length() > 0) {
-			dbCategory.setCategoryName(categoryDTO.getCategoryName());
+			dbCategory.get().setCategoryName(categoryDTO.getCategoryName());
 		}
 		if (categoryDTO.getCategoryDesc() != null && categoryDTO.getCategoryDesc().trim().length() > 0) {
-			dbCategory.setCategoryDesc(categoryDTO.getCategoryDesc());
+			dbCategory.get().setCategoryDesc(categoryDTO.getCategoryDesc());
 		}
-		return categoryService.update(dbCategory);
+		return categoryService.update(dbCategory.get());
 	}
 	@DeleteMapping(value="/delete/{id}")
 	public String deleteCategory(@PathVariable("id") int id) {
-		Category dbCategory = categoryService.getById(id);
+		Optional<Category> dbCategory = categoryService.getById(id);
 		if (dbCategory == null) {
 			throw new ResourceNotFoundException("Category", "categoryId", String.valueOf(id));
 		}
-		return categoryService.delete(id);
+		categoryService.deleteById(id);
+		return "Record is deleted successfully";
 	}
 }

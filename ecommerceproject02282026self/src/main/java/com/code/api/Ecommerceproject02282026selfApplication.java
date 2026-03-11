@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.code.api.dto.LoginDTO;
+import com.code.api.dto.RegisterDTO;
 import com.code.api.entity.Category;
 import com.code.api.entity.Item;
 import com.code.api.entity.ItemOrder;
@@ -79,5 +81,15 @@ public class Ecommerceproject02282026selfApplication {
 	@Scope(value="prototype")
 	Users getUsers() {
 		return new Users();
+	}
+	@Bean(name="registerDTO")
+	@Scope(value="prototype")
+	RegisterDTO getRegisterDTO() {
+		return new RegisterDTO();
+	}
+	@Bean(name="loginDTO")
+	@Scope(value="prototype")
+	LoginDTO getLoginDTO() {
+		return new LoginDTO();
 	}
 }

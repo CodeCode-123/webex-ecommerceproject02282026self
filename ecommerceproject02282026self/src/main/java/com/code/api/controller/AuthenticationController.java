@@ -13,6 +13,8 @@ import com.code.api.response.LoginResponse;
 import com.code.api.service.AuthenticationService;
 import com.code.api.service.JwtService;
 
+import jakarta.validation.Valid;
+
 @RequestMapping("/api/auth")
 @RestController
 public class AuthenticationController {
@@ -24,7 +26,7 @@ public class AuthenticationController {
     }
     
     @PostMapping("/signup")
-    public ResponseEntity<Users> register(@RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<Users> register(@Valid @RequestBody RegisterDTO registerDTO) {
     	Users registeredUser = authenticationService.signup(registerDTO);
     	return ResponseEntity.ok(registeredUser);
     }

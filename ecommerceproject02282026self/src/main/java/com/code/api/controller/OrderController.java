@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.code.api.service.*;
 import com.code.api.dto.OrderRequestDTO;
 import com.code.api.entity.*;
+import com.code.api.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,7 +32,10 @@ public class OrderController {
 	}
 	@GetMapping("/{id}")
 	public ItemOrder getOrderById(@PathVariable("id") int id) {
-		return itemOrderService.getById(id);
+		if (itemOrderService.getById(id) == null) {
+			throw new ResourceNotFoundException("ItemOrder", "itemOrderId", String.valueOf(id));
+		}
+		return itemOrderService.getById(id).get();
 	}
 	@PostMapping("/placeorder") // create an order with items and users
 	public ResponseEntity<ItemOrder> placeOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
@@ -59,18 +63,21 @@ public class OrderController {
 				&& orderRequestDTO.getItemOrderDetailsList().size() > 0) {
 			List<ItemOrderDetails> itemOrderDetailsList = new ArrayList<>();
 			int tempId = 0;
-			ItemOrderDetails tempDetails = null;
+			Optional<ItemOrderDetails> tempDetails = null;
 			int tempQty = 0;
 			double tempPrice = 0;
 			int tempTotal = 0;
 			for (ItemOrderDetails details: orderRequestDTO.getItemOrderDetailsList()) {
 				tempId = details.getItemOrderDetailsId();
+				if (tempId == 0) {
+					throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(tempId));
+				}
 				tempDetails = itemOrderDetailsService.getById(tempId);
 				if (tempDetails != null) {
-					tempDetails.setItemOrder(order);
-					itemOrderDetailsList.add(tempDetails);
-					tempQty = tempDetails.getQty();
-					tempPrice = tempDetails.getItem().getItemPrice();
+					tempDetails.get().setItemOrder(order);
+					itemOrderDetailsList.add(tempDetails.get());
+					tempQty = tempDetails.get().getQty();
+					tempPrice = tempDetails.get().getItem().getItemPrice();
 					tempTotal += tempQty * tempPrice;
 				}
 			}
@@ -87,6 +94,9 @@ public class OrderController {
 	}*/
 	@DeleteMapping("/delete/{id}")
 	public String deleteOrder(@PathVariable("id") int id) {
+		if (itemOrderService.getById(id) == null) {
+			throw new ResourceNotFoundException("ItemOrder", "itemOrderId", String.valueOf(id));
+		}
 		return itemOrderService.delete(id);
 	}
     /*

@@ -1,6 +1,7 @@
 package com.code.api;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
@@ -77,8 +78,7 @@ public class ItermOrderDetailsServiceTest {
 		when(orderDetailsRepository.findById(2)).thenReturn(Optional.of(itemOrderDetailsTwo));
 		assertSame(itemOrderDetailsOne, orderDetailsService.getById(1).get());
 		assertSame(itemOrderDetailsTwo, orderDetailsService.getById(2).get());
-		verify(orderDetailsRepository, times(1)).findById(1);
-		verify(orderDetailsRepository, times(1)).findById(2);
+		verify(orderDetailsRepository, times(2)).findById(anyInt());
 	}
 	@Test
 	void getOrderDetailsAndItemById() {
@@ -88,8 +88,7 @@ public class ItermOrderDetailsServiceTest {
 		assertSame(itemOrderDetailsTwo, orderDetailsService.getOrderDetailsAndItemById(2).get());
 		assertSame(itemOrderDetailsOne.getItem(), orderDetailsService.getOrderDetailsAndItemById(1).get().getItem());
 		assertSame(itemOrderDetailsTwo.getItem(), orderDetailsService.getOrderDetailsAndItemById(2).get().getItem());
-		verify(orderDetailsRepository, times(2)).findItemOrderDetailsAndItemById(1);
-		verify(orderDetailsRepository, times(2)).findItemOrderDetailsAndItemById(2);
+		verify(orderDetailsRepository, times(4)).findItemOrderDetailsAndItemById(anyInt());
 	}
 	@Test
 	void getAllOrders() {

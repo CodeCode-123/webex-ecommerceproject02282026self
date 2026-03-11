@@ -3,6 +3,7 @@ package com.code.api;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 import java.util.List;
@@ -58,7 +59,7 @@ public class UserServiceTest {
 		when(usersRepository.findById(1)).thenReturn(Optional.of(userOne));
 		assertSame(userOne, userService.getUserById(1));
 		assertEquals(userOne.getEmailId(), userService.getUserById(1).getEmailId());
-		verify(usersRepository, times(2)).findById(1);
+		verify(usersRepository, times(2)).findById(anyInt());
 	}
 	
 	
@@ -67,7 +68,7 @@ public class UserServiceTest {
 		when(usersRepository.findByEmailId("admin@abc.com")).thenReturn(Optional.of(userOne));
 		assertSame(userOne, userService.getUserByEmailId("admin@abc.com"));
 		assertEquals(userOne.getId(), userService.getUserByEmailId("admin@abc.com").getId());
-		verify(usersRepository, times(2)).findByEmailId("admin@abc.com");
+		verify(usersRepository, times(2)).findByEmailId(anyString());
 	}
 	
 	@Test

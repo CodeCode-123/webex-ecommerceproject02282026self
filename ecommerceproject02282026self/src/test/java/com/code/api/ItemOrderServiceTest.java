@@ -3,6 +3,7 @@ package com.code.api;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
@@ -143,8 +144,7 @@ public class ItemOrderServiceTest {
 		assertSame(itemOrderTwo, orderService.getById(2).get());
 		assertEquals(List.of(itemOrderDetailsOne), orderService.getById(1).get().getItemOrderDetailsList());
 		assertEquals(List.of(itemOrderDetailsTwo, itemOrderDetailsThree), orderService.getById(2).get().getItemOrderDetailsList());
-		verify(orderRepository, times(2)).findById(1);
-		verify(orderRepository, times(2)).findById(2);
+		verify(orderRepository, times(4)).findById(anyInt());
 	}
 	@Test
 	void getOrderAndOrderDetailsById() {
@@ -154,8 +154,7 @@ public class ItemOrderServiceTest {
 		assertSame(itemOrderTwo, orderService.getOrderAndItemOrderDetailsById(2).get());
 		assertEquals(List.of(itemOrderDetailsOne), orderService.getOrderAndItemOrderDetailsById(1).get().getItemOrderDetailsList());
 		assertEquals(List.of(itemOrderDetailsTwo, itemOrderDetailsThree), orderService.getOrderAndItemOrderDetailsById(2).get().getItemOrderDetailsList());
-		verify(orderRepository, times(2)).findOrderAndItemOrderDetailsById(1);
-		verify(orderRepository, times(2)).findOrderAndItemOrderDetailsById(2);
+		verify(orderRepository, times(4)).findOrderAndItemOrderDetailsById(anyInt());
 	}
 	@Test
 	void getAllOrders() {

@@ -27,7 +27,10 @@ public class OrderDetailsController {
 	}
 	@GetMapping("/{id}")
 	public ItemOrderDetails getOrderDetailsById(@PathVariable("id") int id) {
-		return orderDetailsService.getById(id);
+		if (orderDetailsService.getById(id) == null) {
+			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(id));
+		}
+		return orderDetailsService.getById(id).get();
 	}
 	@PostMapping("/create")
 	public ResponseEntity<ItemOrderDetails> createOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
@@ -48,31 +51,34 @@ public class OrderDetailsController {
 	}
 	@PatchMapping("/edit/{id}")
 	public ResponseEntity<ItemOrderDetails> editOrderDetailsById(@PathVariable("id") int id, @RequestBody OrderDetailsDTO orderDetailsDTO) {
-		ItemOrderDetails dbItemOrderDetails = orderDetailsService.getById(id);
+		Optional<ItemOrderDetails> dbItemOrderDetails = orderDetailsService.getById(id);
 		if (dbItemOrderDetails == null) {
 			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(id));
 		}
 		if (orderDetailsDTO.getItemOrder() != null && orderDetailsDTO.getItemOrder().getOrderId() > 0) {
-			dbItemOrderDetails.setItemOrder(orderDetailsDTO.getItemOrder());
+			dbItemOrderDetails.get().setItemOrder(orderDetailsDTO.getItemOrder());
 		}
 		if (orderDetailsDTO.getItem() != null && orderDetailsDTO.getItem().getItemId() > 0) {
 			Item dbItem = itemService.getById(orderDetailsDTO.getItem().getItemId());
-			dbItemOrderDetails.setItem(dbItem);
+			dbItemOrderDetails.get().setItem(orderDetailsDTO.getItem());
 		}
 		if (orderDetailsDTO.getQty() > 0) {
-			dbItemOrderDetails.setQty(orderDetailsDTO.getQty());
+			dbItemOrderDetails.get().setQty(orderDetailsDTO.getQty());
 		}
-		int qty = dbItemOrderDetails.getQty();
-		double price = dbItemOrderDetails.getItem().getItemPrice();
-		dbItemOrderDetails.setItemValue(qty * price);
+		int qty = dbItemOrderDetails.get().getQty();
+		double price = dbItemOrderDetails.get().getItem().getItemPrice();
+		dbItemOrderDetails.get().setItemValue(price * qty);
 		if (orderDetailsDTO.getItemValue() > 0) {
-			dbItemOrderDetails.setItemValue(orderDetailsDTO.getItemValue());
+			dbItemOrderDetails.get().setItemValue(orderDetailsDTO.getItemValue());
 		}
-		orderDetailsService.update(dbItemOrderDetails);
-		return ResponseEntity.ok(dbItemOrderDetails);
+		orderDetailsService.update(dbItemOrderDetails.get());
+		return ResponseEntity.ok(dbItemOrderDetails.get());
 	}
 	@DeleteMapping("/delete/{id}")
 	public String deleteOrderDetails(@PathVariable("id") int id) {
+		if (orderDetailsService.getById(id) == null) {
+			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(id));
+		}
 		return orderDetailsService.delete(id);
 	}
 	private ItemOrderDetails generateOrderDetails(OrderDetailsDTO orderDetailsDTO) {
