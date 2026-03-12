@@ -125,7 +125,7 @@ public class CategoryServiceTest {
 	}
 	@Test
 	void testDeleteCategory() {
-		doNothing().when(categoryRepository).delete(categoryOneSaved);;
+		doNothing().when(categoryRepository).delete(categoryOneSaved);
 		categoryService.delete(categoryOneSaved);
 		ArgumentCaptor<Category> captor = ArgumentCaptor.forClass(Category.class);
 		verify(categoryRepository, times(1)).delete(captor.capture());
