@@ -21,6 +21,7 @@ import com.code.api.service.ItemOrderDetailsServiceImpl;
 import com.code.api.service.ItemOrderServiceImpl;
 import com.code.api.service.JwtService;
 import com.code.api.service.UserServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootApplication
 public class Ecommerceproject02282026selfApplication {
@@ -91,5 +92,10 @@ public class Ecommerceproject02282026selfApplication {
 	@Scope(value="prototype")
 	LoginDTO getLoginDTO() {
 		return new LoginDTO();
+	}
+	@Bean(name="objectMapper")
+	@Scope(value="prototype")
+	ObjectMapper getObjectMapper() {
+		return new ObjectMapper();
 	}
 }
