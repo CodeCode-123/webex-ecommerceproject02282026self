@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.code.api.service.IUserService;
 import com.code.api.dto.UsersDTO;
 import com.code.api.entity.*;
+import com.code.api.exception.ResourceNotFoundException;
+
 import java.util.*;
 
 @RestController
@@ -22,11 +24,19 @@ public class UsersController {
 	}
 	@GetMapping("/{id}")
 	public Users getUserById(@PathVariable int id) {
-		return userService.getUserById(id);
+		Optional<Users> users = userService.getUserById(id);
+		if (users == null) {
+			throw new ResourceNotFoundException("Users", "id", String.valueOf(id));
+		}
+		return userService.getUserById(id).get();
 	}
 	@GetMapping("/search/{emailId}")
 	public Users getUserByEmailId(@PathVariable String emailId) {
-		return userService.getUserByEmailId(emailId);
+		Optional<Users> users = userService.getUserByEmailId(emailId);
+		if (users == null) {
+			throw new ResourceNotFoundException("Users", "emailId", emailId);
+		}
+		return userService.getUserByEmailId(emailId).get();
 	}
 	@PostMapping("/login")
 	public Users userLogin(@RequestParam("emailId") String emailId, @RequestParam("password") String password) {
@@ -42,28 +52,32 @@ public class UsersController {
 	}
 	@PatchMapping("/edit/{id}")
 	public Users editUsersById(@PathVariable("id") int id, @RequestBody UsersDTO usersDTO) {
-		Users dbUsers = userService.getUserById(id);
+		Optional<Users> dbUsers = userService.getUserById(id);
 		if (usersDTO.getFirstName() != null && usersDTO.getFirstName().trim().length() > 0) {
-			dbUsers.setFirstName(usersDTO.getFirstName());
+			dbUsers.get().setFirstName(usersDTO.getFirstName());
 		}
 		if (usersDTO.getLastName() != null && !usersDTO.getLastName().trim().isBlank()) {
-			dbUsers.setLastName(usersDTO.getLastName());
+			dbUsers.get().setLastName(usersDTO.getLastName());
 		}
 		if (usersDTO.getGender() != null && !usersDTO.getGender().trim().isBlank()) {
-			dbUsers.setGender(usersDTO.getGender());
+			dbUsers.get().setGender(usersDTO.getGender());
 		}
 		if (usersDTO.getCountry() != null && !usersDTO.getCountry().trim().isBlank()) {
-			dbUsers.setCountry(usersDTO.getCountry());
+			dbUsers.get().setCountry(usersDTO.getCountry());
 		}
 		if (usersDTO.getLanguages() != null && usersDTO.getLanguages().length > 0) {
-			dbUsers.setLanguages(usersDTO.getLanguages());
+			dbUsers.get().setLanguages(usersDTO.getLanguages());
 		}
-		return userService.updateUser(dbUsers);
+		return userService.updateUser(dbUsers.get());
 	}
 	@DeleteMapping("/delete/{id}")
 	public String deleteUsers(@PathVariable("id") int id) {
-		return userService.deleteUser(id);
+		Optional<Users> users = userService.getUserById(id);
+		if (users == null) {
+			throw new ResourceNotFoundException("Users", "id", String.valueOf(id));
+		}
+		userService.deleteUserById(id);
+		return "Record delete successfully";
 	}
-	
 }
 

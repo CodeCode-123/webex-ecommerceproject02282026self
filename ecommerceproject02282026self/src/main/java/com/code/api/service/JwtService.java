@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
@@ -76,7 +77,6 @@ public class JwtService {
 	}
 	
 	private Claims extractAllClaims(String token) {
-		// TODO Auto-generated method stub
 		return Jwts
 				.parser()
 				.verifyWith((SecretKey) getSignInKey())
@@ -87,7 +87,6 @@ public class JwtService {
 
 
 	private Key getSignInKey() {
-		// TODO Auto-generated method stub
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}

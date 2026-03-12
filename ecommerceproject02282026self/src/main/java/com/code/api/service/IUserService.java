@@ -1,23 +1,17 @@
 package com.code.api.service;
 
 import java.util.List;
+import java.util.Optional;
+
 import com.code.api.entity.Users;
 
 public interface IUserService {
-	// create the method for the users
-	public Users addUser(Users users);
-
-	public Users updateUser(Users users);
-
-	public String deleteUser(Users users);
-
-	public String deleteUser(int userId);
-
-	public Users getUserById(int userId);
-
-	public Users getUserByEmailId(String emailId);
-	
-	public Users getUserByEmailId(String emailId, String password);
-
-	public List<Users> getAll();
+    Users addUser(Users users);
+	Users updateUser(Users users);
+	void deleteUser(Users users);
+	void deleteUserById(int userId);
+	Optional<Users> getUserById(int userId);
+	Optional<Users> getUserByEmailId(String emailId);	
+	Users getUserByEmailId(String emailId, String password);
+	List<Users> getAll();
 }

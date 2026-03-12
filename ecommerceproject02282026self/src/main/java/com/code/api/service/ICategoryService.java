@@ -6,21 +6,12 @@ import java.util.Optional;
 import com.code.api.entity.Category;
 
 public interface ICategoryService {
-	// declare the method that we want for the student
-	public Category add(Category category);
-
-	public Category update(Category category);
-
-	public void delete(Category category);
-
-	public void deleteById(int id);
-
-	// create some method to get the student
-	public List<Category> getAllCategories();
-
-	public Optional<Category> getById(int id);
-
-	public Optional<Category> getCategoryByName(String catname);
-
-	public List<Category> search(String catname);
+	Category add(Category category);
+	Category update(Category category);
+	void delete(Category category);
+	void deleteById(int id);
+	List<Category> getAllCategories();
+	Optional<Category> getById(int id);
+	Optional<Category> getCategoryByName(String catname);
+	List<Category> search(String catname);
 }

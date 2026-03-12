@@ -11,7 +11,8 @@ import com.code.api.entity.ItemOrderDetails;
 
 @Repository
 public interface IOrderDetailsRepository extends JpaRepository<ItemOrderDetails, Integer>{
-	//List<ItemOrderDetails> findByOrderId(int orderId);
+	//@Query(value="SELECT i FROM itemOrderDetails i JOIN FETECH i.itemOrder WHERE i.itemOrder.orderId=:data")
+	//List<ItemOrderDetails> findByOrderId(@Param("data") int orderId);
 	@Query(value="SELECT i FROM ItemOrderDetails i JOIN FETCH i.item WHERE i.itemOrderDetailsId=:data")
 	Optional<ItemOrderDetails> findItemOrderDetailsAndItemById(@Param("data") int id);
 }

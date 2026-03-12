@@ -18,67 +18,36 @@ public class ItemOrderDetailsServiceImpl implements IItemOrderDetailsService {
     IOrderDetailsRepository orderDetailsRepository;
 	@Override
 	public ItemOrderDetails add(ItemOrderDetails itemOrderDetails) {
-		// TODO Auto-generated method stub
 		return orderDetailsRepository.save(itemOrderDetails);
 	}
 
 	@Override
 	public ItemOrderDetails update(ItemOrderDetails itemOrderDetails) {
-		// TODO Auto-generated method stub
 		return orderDetailsRepository.save(itemOrderDetails);
 	}
 
 	@Override
-	public String delete(ItemOrderDetails itemOrderDetails) {
-		// TODO Auto-generated method stub
+	public void delete(ItemOrderDetails itemOrderDetails) {
 		orderDetailsRepository.delete(itemOrderDetails);
-		return "Record is deleted successfully";
 	}
 
 	@Override
-	public String delete(int id) {
-		// TODO Auto-generated method stub
-		// find by Id
-		Optional<ItemOrderDetails> itemOrderDetailsOptional = orderDetailsRepository.findById(id);
-		// check if the item order details is present or not 
-		if (itemOrderDetailsOptional.isPresent()) {
-			orderDetailsRepository.delete(itemOrderDetailsOptional.get());
-			return "Record is deleted successfully";
-		}
-		return "Item order details with Id " + id + " not found";
+	public void deleteById(int id) {
+		orderDetailsRepository.deleteById(id);
 	}
 
 	@Override
 	public List<ItemOrderDetails> getAll() {
-		// TODO Auto-generated method stub
 		return orderDetailsRepository.findAll();
 	}
 
 	@Override
 	public Optional<ItemOrderDetails> getById(int id) {
 		return orderDetailsRepository.findById(id);
-//		// find by Id
-//		Optional<ItemOrderDetails> itemOrderDetailsOptional = orderDetailsRepository.findById(id);
-//		ItemOrderDetails itemOrderDetails = null;
-//		// check if the category is present or not
-//		if (itemOrderDetailsOptional.isPresent()) {
-//			itemOrderDetails = itemOrderDetailsOptional.get();
-//		}
-//		return itemOrderDetails;
 	}
 
 	@Override
-	public Optional<ItemOrderDetails> getOrderDetailsAndItemById(int id) {
-		// TODO Auto-generated method stub
+	public Optional<ItemOrderDetails> getItemOrderDetailsAndItemById(int id) {
 		return orderDetailsRepository.findItemOrderDetailsAndItemById(id);
 	}
-	
-
-	/*
-	@Override
-	public List<ItemOrderDetails> getByOrderId(int id) {
-		// TODO Auto-generated method stub
-		return orderDetailsRepository.findByOrderId(id);
-	}*/
-
 }

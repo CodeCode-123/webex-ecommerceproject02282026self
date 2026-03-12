@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.catalina.core.ApplicationContext;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,15 +32,15 @@ public class CategoryServiceTest {
 	@InjectMocks
 	private CategoryServiceImpl categoryService;
 	@Autowired
-	Category categoryOneToSave;
+	private Category categoryOneToSave;
 	@Autowired
-	Category categoryOneSaved;
+	private Category categoryOneSaved;
 	@Autowired
-	Category categoryOneUpdated;
+	private Category categoryOneUpdated;
 	@Autowired
-	Category categoryTwoToSave;
+	private Category categoryTwoToSave;
 	@Autowired
-	Category categoryTwoSaved;
+	private Category categoryTwoSaved;
 		
 	public CategoryServiceTest() {
 		MockitoAnnotations.openMocks(this);
@@ -48,21 +49,26 @@ public class CategoryServiceTest {
 	@BeforeEach
 	public void beforeEach() {
 		// set category one ToSave
+		categoryOneToSave = new Category();
 		categoryOneToSave.setCategoryName("Pizza");
 		categoryOneToSave.setCategoryDesc("Cheese Pizza");
 		// set category one Saved
+		categoryOneSaved = new Category();
 		categoryOneSaved.setCategoryId(1);
 		categoryOneSaved.setCategoryName("Pizza");
 		categoryOneSaved.setCategoryDesc("Cheese Pizza");
 		// set category one Updated
+		categoryOneUpdated = new Category();
 		categoryOneUpdated.setCategoryId(1);
 		categoryOneUpdated.setCategoryName("Pizza");
 		categoryOneUpdated.setCategoryDesc("Double Cheese Pizza");
 
 		// set category two ToSave
+		categoryTwoToSave = new Category();
 		categoryTwoToSave.setCategoryName("Burger");
 		categoryTwoToSave.setCategoryDesc("Cheese Burger");
 		// set category two Saved
+		categoryTwoSaved = new Category();
 		categoryTwoSaved.setCategoryId(2);
 		categoryTwoSaved.setCategoryName("Burger");
 		categoryTwoSaved.setCategoryDesc("Cheese Burger");

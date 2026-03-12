@@ -4,6 +4,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.code.api.dto.LoginDTO;
 import com.code.api.dto.RegisterDTO;
@@ -11,6 +12,7 @@ import com.code.api.entity.Users;
 import com.code.api.repository.IUsersRepository;
 
 @Service
+@Transactional
 public class AuthenticationService {
 	private IUsersRepository usersRepository;
 	private final PasswordEncoder passwordEncoder;

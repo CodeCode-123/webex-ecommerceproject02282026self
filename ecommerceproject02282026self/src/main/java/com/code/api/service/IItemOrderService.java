@@ -9,11 +9,11 @@ import com.code.api.entity.ItemOrder;
 import com.code.api.entity.ItemOrderDetails;
 
 public interface IItemOrderService {
-	public ItemOrder add(ItemOrder itemOrder);
-	public ItemOrder update(ItemOrder itemOrder);
-	public String delete(ItemOrder itemOrder);
-	public String delete(int id);
-	public List<ItemOrder> getAll();
-	public Optional<ItemOrder> getById(int id);
-	public Optional<ItemOrder> getOrderAndItemOrderDetailsById(@Param("data") int orderId);
+	ItemOrder add(ItemOrder itemOrder);
+	ItemOrder update(ItemOrder itemOrder);
+	void delete(ItemOrder itemOrder);
+	void deleteById(int id);
+	List<ItemOrder> getAll();
+	Optional<ItemOrder> getById(int id);
+	Optional<ItemOrder> getOrderAndItemOrderDetailsById(@Param("data") int orderId);
 }

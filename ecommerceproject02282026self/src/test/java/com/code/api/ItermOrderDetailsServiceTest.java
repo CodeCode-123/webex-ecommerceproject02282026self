@@ -84,10 +84,10 @@ public class ItermOrderDetailsServiceTest {
 	void getOrderDetailsAndItemById() {
 		when(orderDetailsRepository.findItemOrderDetailsAndItemById(1)).thenReturn(Optional.of(itemOrderDetailsOne));
 		when(orderDetailsRepository.findItemOrderDetailsAndItemById(2)).thenReturn(Optional.of(itemOrderDetailsTwo));
-		assertSame(itemOrderDetailsOne, orderDetailsService.getOrderDetailsAndItemById(1).get());
-		assertSame(itemOrderDetailsTwo, orderDetailsService.getOrderDetailsAndItemById(2).get());
-		assertSame(itemOrderDetailsOne.getItem(), orderDetailsService.getOrderDetailsAndItemById(1).get().getItem());
-		assertSame(itemOrderDetailsTwo.getItem(), orderDetailsService.getOrderDetailsAndItemById(2).get().getItem());
+		assertSame(itemOrderDetailsOne, orderDetailsService.getItemOrderDetailsAndItemById(1).get());
+		assertSame(itemOrderDetailsTwo, orderDetailsService.getItemOrderDetailsAndItemById(2).get());
+		assertSame(itemOrderDetailsOne.getItem(), orderDetailsService.getItemOrderDetailsAndItemById(1).get().getItem());
+		assertSame(itemOrderDetailsTwo.getItem(), orderDetailsService.getItemOrderDetailsAndItemById(2).get().getItem());
 		verify(orderDetailsRepository, times(4)).findItemOrderDetailsAndItemById(anyInt());
 	}
 	@Test

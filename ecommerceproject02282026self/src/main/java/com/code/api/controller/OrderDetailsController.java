@@ -59,7 +59,10 @@ public class OrderDetailsController {
 			dbItemOrderDetails.get().setItemOrder(orderDetailsDTO.getItemOrder());
 		}
 		if (orderDetailsDTO.getItem() != null && orderDetailsDTO.getItem().getItemId() > 0) {
-			Item dbItem = itemService.getById(orderDetailsDTO.getItem().getItemId());
+			Optional<Item> dbItem = itemService.getById(orderDetailsDTO.getItem().getItemId());
+			if (dbItem == null) {
+				throw new ResourceNotFoundException("Item", "itemId", String.valueOf(orderDetailsDTO.getItem().getItemId()));
+			}
 			dbItemOrderDetails.get().setItem(orderDetailsDTO.getItem());
 		}
 		if (orderDetailsDTO.getQty() > 0) {
@@ -79,7 +82,8 @@ public class OrderDetailsController {
 		if (orderDetailsService.getById(id) == null) {
 			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(id));
 		}
-		return orderDetailsService.delete(id);
+		orderDetailsService.deleteById(id);
+		return "Record is deleted successfully";
 	}
 	private ItemOrderDetails generateOrderDetails(OrderDetailsDTO orderDetailsDTO) {
 		if (orderDetailsDTO.getItem() == null || orderDetailsDTO.getItem().getItemId() <= 0) {
@@ -90,9 +94,9 @@ public class OrderDetailsController {
 			throw new ResourceNotFoundException("Item", "itemId", String.valueOf(itemId));
 		}
 		ItemOrderDetails tempItemOrderDetails = new ItemOrderDetails();
-		Item tempItem = itemService.getById(itemId);
-		tempItemOrderDetails.setItem(tempItem);
-		double price = itemService.getById(itemId).getItemPrice();
+		Optional<Item> tempItem = itemService.getById(itemId);
+		tempItemOrderDetails.setItem(tempItem.get());
+		double price = itemService.getById(itemId).get().getItemPrice();
 		int qty = orderDetailsDTO.getQty();
 		tempItemOrderDetails.setQty(qty);
 		tempItemOrderDetails.setItemValue(qty * price);

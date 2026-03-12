@@ -36,12 +36,4 @@ public class ItemOrderDetails {
 	@JoinColumn(name="order_id")
 	@JsonIgnore
 	private ItemOrder itemOrder;
-	
-	/*
-	public void setItemValue() {
-		this.itemValue = qty * item.getItemPrice();
-	}
-	public double getItemValue() {
-		return qty * item.getItemPrice();
-	}*/
 }

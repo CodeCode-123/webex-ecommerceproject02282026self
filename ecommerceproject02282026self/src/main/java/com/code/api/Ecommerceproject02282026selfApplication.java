@@ -44,7 +44,7 @@ public class Ecommerceproject02282026selfApplication {
 	ItemOrderServiceImpl getItemOrderService() {
 		return new ItemOrderServiceImpl();
 	}
-	@Bean(name="orderDetailsService")
+	@Bean(name="itemOrderDetailsService")
 	ItemOrderDetailsServiceImpl getItemOrderDetailsService() {
 		return new ItemOrderDetailsServiceImpl();
 	}
