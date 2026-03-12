@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -35,9 +36,16 @@ public class ItermOrderDetailsServiceTest {
 	@Autowired
 	private Item item;
 	@Autowired
-	private ItemOrderDetails itemOrderDetailsOne;
+	private ItemOrderDetails itemOrderDetailsOneToSave;
 	@Autowired
-	private ItemOrderDetails itemOrderDetailsTwo;
+	private ItemOrderDetails itemOrderDetailsOneSaved;
+	@Autowired
+	private ItemOrderDetails itemOrderDetailsOneUpdated;
+	@Autowired
+	private ItemOrderDetails itemOrderDetailsTwoToSave;
+	@Autowired
+	private ItemOrderDetails itemOrderDetailsTwoSaved;
+	
 	public ItermOrderDetailsServiceTest() {
 		MockitoAnnotations.openMocks(this);
 	}
@@ -52,12 +60,23 @@ public class ItermOrderDetailsServiceTest {
 		item.setCategory(category);
 		item.setItemName("Cheese Pizza");
 		item.setItemPrice(10);
-		// set item order details one
+		// set item order details one ToSave
 		int qty = 2;
-		itemOrderDetailsOne.setItemOrderDetailsId(1);
-		itemOrderDetailsOne.setItem(item);
-		itemOrderDetailsOne.setQty(2);
-		itemOrderDetailsOne.setItemValue(item.getItemPrice() * qty);
+		itemOrderDetailsOneToSave.setItem(item);
+		itemOrderDetailsOneToSave.setQty(qty);
+		itemOrderDetailsOneToSave.setItemValue(item.getItemPrice() * qty);
+		// set item order details one Saved
+		itemOrderDetailsOneSaved.setItemOrderDetailsId(1);
+		itemOrderDetailsOneSaved.setItem(item);
+		itemOrderDetailsOneSaved.setQty(qty);
+		itemOrderDetailsOneSaved.setItemValue(item.getItemPrice() * qty);
+		// set item order details one Updated
+		qty = 3;
+		itemOrderDetailsOneUpdated.setItemOrderDetailsId(1);
+		itemOrderDetailsOneUpdated.setItem(item);
+		itemOrderDetailsOneUpdated.setQty(qty);
+		itemOrderDetailsOneUpdated.setItemValue(item.getItemPrice() * qty);
+		
 		// set category two
 		category.setCategoryId(2);
 		category.setCategoryName("Burger");
@@ -67,36 +86,72 @@ public class ItermOrderDetailsServiceTest {
 		item.setCategory(category);
 		item.setItemName("Big Mac");
 		item.setItemPrice(8);
-		// set item order details two
-		qty = 3;
-		itemOrderDetailsTwo.setItemOrderDetailsId(2);
-		itemOrderDetailsTwo.setItem(item);
-		itemOrderDetailsTwo.setQty(qty);
-		itemOrderDetailsTwo.setItemValue(item.getItemPrice() * qty);		
+		// set item order details two ToSave
+		qty = 5;
+		itemOrderDetailsTwoToSave.setItem(item);
+		itemOrderDetailsTwoToSave.setQty(qty);
+		itemOrderDetailsTwoToSave.setItemValue(item.getItemPrice() * qty);
+		// set item order details two Saved
+		itemOrderDetailsTwoSaved.setItemOrderDetailsId(2);
+		itemOrderDetailsTwoSaved.setItem(item);
+		itemOrderDetailsTwoSaved.setQty(qty);
+		itemOrderDetailsTwoSaved.setItemValue(item.getItemPrice() * qty);		
 	}
 	@Test
 	void getOrderDetailsById() {
-		when(orderDetailsRepository.findById(1)).thenReturn(Optional.of(itemOrderDetailsOne));
-		when(orderDetailsRepository.findById(2)).thenReturn(Optional.of(itemOrderDetailsTwo));
-		assertSame(itemOrderDetailsOne, orderDetailsService.getById(1).get());
-		assertSame(itemOrderDetailsTwo, orderDetailsService.getById(2).get());
+		when(orderDetailsRepository.findById(1)).thenReturn(Optional.of(itemOrderDetailsOneSaved));
+		when(orderDetailsRepository.findById(2)).thenReturn(Optional.of(itemOrderDetailsTwoSaved));
+		assertSame(itemOrderDetailsOneSaved, orderDetailsService.getById(1).get());
+		assertSame(itemOrderDetailsTwoSaved, orderDetailsService.getById(2).get());
 		verify(orderDetailsRepository, times(2)).findById(anyInt());
 	}
 	@Test
 	void getOrderDetailsAndItemById() {
-		when(orderDetailsRepository.findItemOrderDetailsAndItemById(1)).thenReturn(Optional.of(itemOrderDetailsOne));
-		when(orderDetailsRepository.findItemOrderDetailsAndItemById(2)).thenReturn(Optional.of(itemOrderDetailsTwo));
-		assertSame(itemOrderDetailsOne, orderDetailsService.getItemOrderDetailsAndItemById(1).get());
-		assertSame(itemOrderDetailsTwo, orderDetailsService.getItemOrderDetailsAndItemById(2).get());
-		assertSame(itemOrderDetailsOne.getItem(), orderDetailsService.getItemOrderDetailsAndItemById(1).get().getItem());
-		assertSame(itemOrderDetailsTwo.getItem(), orderDetailsService.getItemOrderDetailsAndItemById(2).get().getItem());
+		when(orderDetailsRepository.findItemOrderDetailsAndItemById(1)).thenReturn(Optional.of(itemOrderDetailsOneSaved));
+		when(orderDetailsRepository.findItemOrderDetailsAndItemById(2)).thenReturn(Optional.of(itemOrderDetailsTwoSaved));
+		assertSame(itemOrderDetailsOneSaved, orderDetailsService.getItemOrderDetailsAndItemById(1).get());
+		assertSame(itemOrderDetailsTwoSaved, orderDetailsService.getItemOrderDetailsAndItemById(2).get());
+		assertSame(itemOrderDetailsOneSaved.getItem(), orderDetailsService.getItemOrderDetailsAndItemById(1).get().getItem());
+		assertSame(itemOrderDetailsTwoSaved.getItem(), orderDetailsService.getItemOrderDetailsAndItemById(2).get().getItem());
 		verify(orderDetailsRepository, times(4)).findItemOrderDetailsAndItemById(anyInt());
 	}
 	@Test
 	void getAllOrders() {
-		when(orderDetailsRepository.findAll()).thenReturn(List.of(itemOrderDetailsOne, itemOrderDetailsTwo));
-		assertEquals(List.of(itemOrderDetailsOne, itemOrderDetailsTwo), orderDetailsService.getAll());
+		when(orderDetailsRepository.findAll()).thenReturn(List.of(itemOrderDetailsOneSaved, itemOrderDetailsTwoSaved));
+		assertEquals(List.of(itemOrderDetailsOneSaved, itemOrderDetailsTwoSaved), orderDetailsService.getAll());
 		verify(orderDetailsRepository, times(1)).findAll();
 	}
-
+	@Test
+	void testAddItemOrderDetails() {
+		when(orderDetailsRepository.save(itemOrderDetailsOneToSave)).thenReturn(itemOrderDetailsOneSaved);
+		when(orderDetailsRepository.save(itemOrderDetailsTwoToSave)).thenReturn(itemOrderDetailsTwoSaved);
+		assertSame(itemOrderDetailsOneSaved, orderDetailsService.add(itemOrderDetailsOneToSave));
+		assertSame(itemOrderDetailsTwoSaved, orderDetailsService.add(itemOrderDetailsTwoToSave));
+		ArgumentCaptor<ItemOrderDetails> captor = ArgumentCaptor.forClass(ItemOrderDetails.class);
+		verify(orderDetailsRepository, times(2)).save(captor.capture());
+	}
+	@Test
+	void testUpdateItemOrderDetails() {
+		when(orderDetailsRepository.save(itemOrderDetailsOneUpdated)).thenReturn(itemOrderDetailsOneUpdated);
+		assertSame(itemOrderDetailsOneUpdated, orderDetailsService.update(itemOrderDetailsOneUpdated));
+		ArgumentCaptor<ItemOrderDetails> captor = ArgumentCaptor.forClass(ItemOrderDetails.class);
+		verify(orderDetailsRepository, times(1)).save(captor.capture());
+	}
+	@Test
+	void testDeleteItemOrderDetails() {
+		doNothing().when(orderDetailsRepository).delete(itemOrderDetailsOneSaved);
+		doNothing().when(orderDetailsRepository).delete(itemOrderDetailsTwoSaved);
+		orderDetailsService.delete(itemOrderDetailsOneSaved);
+		orderDetailsService.delete(itemOrderDetailsTwoSaved);
+		ArgumentCaptor<ItemOrderDetails> captor = ArgumentCaptor.forClass(ItemOrderDetails.class);
+ 		verify(orderDetailsRepository, times(2)).delete(captor.capture());
+	}
+	@Test
+	void testDeleteItemOrderDetailsById() {
+		doNothing().when(orderDetailsRepository).deleteById(1);
+		doNothing().when(orderDetailsRepository).deleteById(2);
+		orderDetailsService.deleteById(1);
+		orderDetailsService.deleteById(2); 		
+		verify(orderDetailsRepository, times(2)).deleteById(anyInt());
+	}
 }

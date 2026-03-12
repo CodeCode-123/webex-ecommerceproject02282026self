@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -49,9 +50,17 @@ public class ItemOrderServiceTest {
 	@Autowired
 	private ItemOrderDetails itemOrderDetailsThree;
 	@Autowired
-	private ItemOrder itemOrderOne;
+	private ItemOrderDetails itemOrderDetailsFour;
 	@Autowired
-	private ItemOrder itemOrderTwo;
+	private ItemOrder itemOrderOneToSave;
+	@Autowired
+	private ItemOrder itemOrderOneSaved;
+	@Autowired
+	private ItemOrder itemOrderTwoToSave;
+	@Autowired
+	private ItemOrder itemOrderTwoSaved;
+	@Autowired
+	private ItemOrder itemOrderTwoUpdated;
 	
 	public ItemOrderServiceTest() {
 		MockitoAnnotations.openMocks(this);
@@ -116,51 +125,116 @@ public class ItemOrderServiceTest {
 		itemOrderDetailsThree.setQty(qty);
 		itemOrderDetailsThree.setItemValue(item.getItemPrice() * qty);
 		
-		// set item order one
-		itemOrderOne.setOrderId(1);
-		itemOrderOne.setUsers(userOne);
-		itemOrderOne.setItemOrderDetailsList(List.of(itemOrderDetailsOne));
-		itemOrderOne.setTotalAmount(itemOrderDetailsOne.getItemValue());
+		// set item four
+		item.setItemId(4);
+		item.setCategory(category);
+		item.setItemName("Double Cheese Burger");
+		item.setItemPrice(8);
+		
+		// set item order details four
+		qty = 6;
+		itemOrderDetailsFour.setItemOrderDetailsId(4);
+		itemOrderDetailsFour.setItem(item);
+		itemOrderDetailsFour.setQty(qty);
+		itemOrderDetailsFour.setItemValue(item.getItemPrice() * qty);
+		
+		// set item order one ToSave
+		itemOrderOneToSave.setUsers(userOne);
+		itemOrderOneToSave.setItemOrderDetailsList(List.of(itemOrderDetailsOne));
+		itemOrderOneToSave.setTotalAmount(itemOrderDetailsOne.getItemValue());
 		LocalDateTime nowTime = LocalDateTime.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		String formattedDate = nowTime.format(formatter);
-		itemOrderOne.setOrderDate(formattedDate);
+		itemOrderOneToSave.setOrderDate(formattedDate);
+		// set item order one Saved
+		itemOrderOneSaved.setOrderId(1);
+		itemOrderOneSaved.setUsers(userOne);
+		itemOrderOneSaved.setItemOrderDetailsList(List.of(itemOrderDetailsOne));
+		itemOrderOneSaved.setTotalAmount(itemOrderDetailsOne.getItemValue());
+		itemOrderOneToSave.setOrderDate(formattedDate);
 		
-		// set item order two
-		itemOrderTwo.setOrderId(2);
-		itemOrderTwo.setUsers(userTwo);
-		itemOrderTwo.setItemOrderDetailsList(List.of(itemOrderDetailsTwo, itemOrderDetailsThree));
-		itemOrderTwo.setTotalAmount(itemOrderDetailsTwo.getItemValue()+itemOrderDetailsThree.getItemValue());
+		// set item order two ToSave
+		itemOrderTwoToSave.setUsers(userTwo);
+		itemOrderTwoToSave.setItemOrderDetailsList(List.of(itemOrderDetailsTwo, itemOrderDetailsThree));
+		itemOrderTwoToSave.setTotalAmount(itemOrderDetailsTwo.getItemValue() + itemOrderDetailsThree.getItemValue());
 		nowTime = LocalDateTime.now();
 		formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		formattedDate = nowTime.format(formatter);
-		itemOrderTwo.setOrderDate(formattedDate);
+		itemOrderTwoToSave.setOrderDate(formattedDate);
+		// set item order two Saved
+		itemOrderTwoSaved.setOrderId(2);
+		itemOrderTwoSaved.setUsers(userTwo);
+		itemOrderTwoSaved.setItemOrderDetailsList(List.of(itemOrderDetailsTwo, itemOrderDetailsThree));
+		itemOrderTwoSaved.setTotalAmount(itemOrderDetailsTwo.getItemValue() + itemOrderDetailsThree.getItemValue());
+		itemOrderTwoSaved.setOrderDate(formattedDate);
 	}
 
 	@Test
 	void getOrderById() {
-		when(orderRepository.findById(1)).thenReturn(Optional.of(itemOrderOne));
-		when(orderRepository.findById(2)).thenReturn(Optional.of(itemOrderTwo));
-		assertSame(itemOrderOne, orderService.getById(1).get());
-		assertSame(itemOrderTwo, orderService.getById(2).get());
+		when(orderRepository.findById(1)).thenReturn(Optional.of(itemOrderOneSaved));
+		when(orderRepository.findById(2)).thenReturn(Optional.of(itemOrderTwoSaved));
+		assertSame(itemOrderOneSaved, orderService.getById(1).get());
+		assertSame(itemOrderTwoSaved, orderService.getById(2).get());
 		assertEquals(List.of(itemOrderDetailsOne), orderService.getById(1).get().getItemOrderDetailsList());
 		assertEquals(List.of(itemOrderDetailsTwo, itemOrderDetailsThree), orderService.getById(2).get().getItemOrderDetailsList());
 		verify(orderRepository, times(4)).findById(anyInt());
 	}
 	@Test
 	void getOrderAndOrderDetailsById() {
-		when(orderRepository.findOrderAndItemOrderDetailsById(1)).thenReturn(Optional.of(itemOrderOne));
-		when(orderRepository.findOrderAndItemOrderDetailsById(2)).thenReturn(Optional.of(itemOrderTwo));
-		assertSame(itemOrderOne, orderService.getOrderAndItemOrderDetailsById(1).get());
-		assertSame(itemOrderTwo, orderService.getOrderAndItemOrderDetailsById(2).get());
+		when(orderRepository.findOrderAndItemOrderDetailsById(1)).thenReturn(Optional.of(itemOrderOneSaved));
+		when(orderRepository.findOrderAndItemOrderDetailsById(2)).thenReturn(Optional.of(itemOrderTwoSaved));
+		assertSame(itemOrderOneSaved, orderService.getOrderAndItemOrderDetailsById(1).get());
+		assertSame(itemOrderTwoSaved, orderService.getOrderAndItemOrderDetailsById(2).get());
 		assertEquals(List.of(itemOrderDetailsOne), orderService.getOrderAndItemOrderDetailsById(1).get().getItemOrderDetailsList());
 		assertEquals(List.of(itemOrderDetailsTwo, itemOrderDetailsThree), orderService.getOrderAndItemOrderDetailsById(2).get().getItemOrderDetailsList());
 		verify(orderRepository, times(4)).findOrderAndItemOrderDetailsById(anyInt());
 	}
 	@Test
 	void getAllOrders() {
-		when(orderRepository.findAll()).thenReturn(List.of(itemOrderOne, itemOrderTwo));
-		assertEquals(List.of(itemOrderOne, itemOrderTwo), orderService.getAll());
+		when(orderRepository.findAll()).thenReturn(List.of(itemOrderOneSaved, itemOrderTwoSaved));
+		assertEquals(List.of(itemOrderOneSaved, itemOrderTwoSaved), orderService.getAll());
 		verify(orderRepository, times(1)).findAll();
+	}
+	@Test
+	void testAddOrder() {
+		when(orderRepository.save(itemOrderOneToSave)).thenReturn(itemOrderOneSaved);
+		when(orderRepository.save(itemOrderTwoToSave)).thenReturn(itemOrderTwoSaved);
+		assertSame(itemOrderOneSaved, orderService.add(itemOrderOneToSave));
+		assertSame(itemOrderTwoSaved, orderService.add(itemOrderTwoToSave));
+		ArgumentCaptor<ItemOrder> captor = ArgumentCaptor.forClass(ItemOrder.class);
+		verify(orderRepository, times(2)).save(captor.capture());
+	}
+	@Test
+	void testUpdateOrder() {
+		// set item order two Updated
+		itemOrderTwoUpdated.setOrderId(2);
+		itemOrderTwoUpdated.setUsers(userTwo);
+		itemOrderTwoUpdated.setItemOrderDetailsList(List.of(itemOrderDetailsFour));
+		itemOrderTwoUpdated.setTotalAmount(itemOrderDetailsFour.getItemValue());
+		LocalDateTime nowTime = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		String formattedDate = nowTime.format(formatter);
+		itemOrderTwoUpdated.setOrderDate(formattedDate);
+		when(orderRepository.save(itemOrderTwoUpdated)).thenReturn(itemOrderTwoUpdated);
+		assertSame(itemOrderTwoUpdated, orderService.update(itemOrderTwoUpdated));
+		ArgumentCaptor<ItemOrder> captor = ArgumentCaptor.forClass(ItemOrder.class);
+		verify(orderRepository, times(1)).save(captor.capture());
+	}
+	@Test
+	void testDeleteOrder() {
+		doNothing().when(orderRepository).delete(itemOrderOneSaved);
+		doNothing().when(orderRepository).delete(itemOrderTwoSaved);
+		orderService.delete(itemOrderOneSaved);
+		orderService.delete(itemOrderTwoSaved);
+		ArgumentCaptor<ItemOrder> captor = ArgumentCaptor.forClass(ItemOrder.class);
+		verify(orderRepository, times(2)).delete(captor.capture());
+	}
+	@Test
+	void testDeleteOrderById() {
+		doNothing().when(orderRepository).deleteById(1);
+		doNothing().when(orderRepository).deleteById(2);
+		orderService.deleteById(1);
+		orderService.deleteById(2);
+		verify(orderRepository, times(2)).deleteById(anyInt());
 	}
 }
