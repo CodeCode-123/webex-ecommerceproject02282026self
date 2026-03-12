@@ -1,6 +1,7 @@
-package com.code.api;
+package com.code.api.service;
 
 import static org.mockito.Mockito.times;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
@@ -11,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -20,11 +20,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.code.api.Ecommerceproject02282026selfApplication;
 import com.code.api.dto.LoginDTO;
 import com.code.api.dto.RegisterDTO;
 import com.code.api.entity.Users;
 import com.code.api.repository.IUsersRepository;
-import com.code.api.service.AuthenticationService;
 
 @SpringBootTest(classes=Ecommerceproject02282026selfApplication.class)
 public class AuthenticationServiceTest {

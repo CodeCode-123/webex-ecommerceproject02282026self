@@ -1,4 +1,4 @@
-package com.code.api;
+package com.code.api.service;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.code.api.Ecommerceproject02282026selfApplication;
 import com.code.api.entity.Category;
 import com.code.api.entity.Item;
 import com.code.api.entity.ItemOrder;
@@ -30,27 +31,27 @@ import com.code.api.service.ItemOrderServiceImpl;
 @SpringBootTest(classes=Ecommerceproject02282026selfApplication.class)
 public class ItemOrderServiceTest {
 	@Mock
-	IOrdersRepository orderRepository;
+	private IOrdersRepository orderRepository;
 	@InjectMocks
-	ItemOrderServiceImpl orderService;
+	private ItemOrderServiceImpl orderService;
 	@Autowired
-	Users userOne;
+	private Users userOne;
 	@Autowired
-	Users userTwo;
+	private Users userTwo;
 	@Autowired
-    Category category;
+    private Category category;
 	@Autowired
-	Item item;
+	private Item item;
 	@Autowired
-	ItemOrderDetails itemOrderDetailsOne;
+	private ItemOrderDetails itemOrderDetailsOne;
 	@Autowired
-	ItemOrderDetails itemOrderDetailsTwo;
+	private ItemOrderDetails itemOrderDetailsTwo;
 	@Autowired
-	ItemOrderDetails itemOrderDetailsThree;
+	private ItemOrderDetails itemOrderDetailsThree;
 	@Autowired
-	ItemOrder itemOrderOne;
+	private ItemOrder itemOrderOne;
 	@Autowired
-	ItemOrder itemOrderTwo;
+	private ItemOrder itemOrderTwo;
 	
 	public ItemOrderServiceTest() {
 		MockitoAnnotations.openMocks(this);

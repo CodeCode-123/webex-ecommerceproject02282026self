@@ -1,4 +1,4 @@
-package com.code.api;
+package com.code.api.service;
 
 import static org.mockito.Mockito.times;
 
@@ -20,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.code.api.Ecommerceproject02282026selfApplication;
 import com.code.api.entity.Users;
 import com.code.api.repository.IUsersRepository;
 import com.code.api.service.UserServiceImpl;
@@ -31,15 +32,15 @@ public class UserServiceTest {
 	@InjectMocks
 	private UserServiceImpl userService;
 	@Autowired
-	Users userOneToSave;
+	private Users userOneToSave;
 	@Autowired
-	Users userOneSaved;
+	private Users userOneSaved;
 	@Autowired
-	Users userOneUpdated;
+	private Users userOneUpdated;
 	@Autowired
-	Users userTwoToSave;
+	private Users userTwoToSave;
 	@Autowired
-	Users userTwoSaved;
+	private Users userTwoSaved;
 	
 	public UserServiceTest() {
 		MockitoAnnotations.openMocks(this);

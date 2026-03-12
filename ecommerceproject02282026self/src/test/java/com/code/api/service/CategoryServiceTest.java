@@ -1,4 +1,4 @@
-package com.code.api;
+package com.code.api.service;
 
 import org.mockito.MockitoAnnotations;
 import org.mockito.Mockito.*;
@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.code.api.Ecommerceproject02282026selfApplication;
 import com.code.api.entity.Category;
 import com.code.api.repository.ICategoryRepository;
 import com.code.api.service.CategoryServiceImpl;

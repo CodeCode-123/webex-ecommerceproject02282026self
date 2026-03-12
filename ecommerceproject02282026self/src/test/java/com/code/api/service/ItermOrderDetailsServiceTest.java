@@ -1,4 +1,4 @@
-package com.code.api;
+package com.code.api.service;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.*;
+
+import com.code.api.Ecommerceproject02282026selfApplication;
 import com.code.api.entity.Category;
 import com.code.api.entity.Item;
 import com.code.api.entity.ItemOrderDetails;
@@ -25,17 +27,17 @@ import java.util.*;
 @SpringBootTest(classes=Ecommerceproject02282026selfApplication.class)
 public class ItermOrderDetailsServiceTest {
 	@Mock
-	IOrderDetailsRepository orderDetailsRepository;
+	private IOrderDetailsRepository orderDetailsRepository;
 	@InjectMocks
-	ItemOrderDetailsServiceImpl orderDetailsService;
+	private ItemOrderDetailsServiceImpl orderDetailsService;
 	@Autowired
-    Category category;
+    private Category category;
 	@Autowired
-	Item item;
+	private Item item;
 	@Autowired
-	ItemOrderDetails itemOrderDetailsOne;
+	private ItemOrderDetails itemOrderDetailsOne;
 	@Autowired
-	ItemOrderDetails itemOrderDetailsTwo;
+	private ItemOrderDetails itemOrderDetailsTwo;
 	public ItermOrderDetailsServiceTest() {
 		MockitoAnnotations.openMocks(this);
 	}
