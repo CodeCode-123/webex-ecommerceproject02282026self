@@ -77,7 +77,7 @@ public class UsersController {
 			throw new ResourceNotFoundException("Users", "id", String.valueOf(id));
 		}
 		userService.deleteUserById(id);
-		return "Record delete successfully";
+		return "Record is deleted successfully";
 	}
 }
 

@@ -22,9 +22,12 @@ import com.code.api.entity.Category;
 import com.code.api.entity.Item;
 import com.code.api.service.CategoryServiceImpl;
 import com.code.api.service.ItemServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
+import static org.assertj.core.api.Assertions.contentOf;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -64,6 +67,8 @@ public class ItemControllerTest {
 	private Category category;
 	@Autowired
 	private MockMvc mockMvc;
+	@Autowired
+	private ObjectMapper objectMapper;
 	private static final MediaType mediaType=MediaType.APPLICATION_JSON;
 	@BeforeAll
 	public static void setup() {
@@ -93,7 +98,6 @@ public class ItemControllerTest {
 		jdbc.execute("DELETE FROM category");
 		jdbc.execute("ALTER TABLE category ALTER COLUMN category_id RESTART WITH 1");
 	}
-	
 	@Test
 	@DisplayName("Get all items")
 	@WithMockUser(username="testUser", roles= {"USER"})
@@ -142,10 +146,78 @@ public class ItemControllerTest {
 		.andExpect(jsonPath("$.itemName", is("Cheese Burger")))
 		.andExpect(jsonPath("$.itemPrice", is(6)));
 	}
-	
-	// create item
-	// edit item
-	// edit by id
-	// delete item
-
+	@Test
+	@DisplayName("Create item")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void createItemHttpRequest() throws Exception{
+		// set another item
+		category.setCategoryId(2);
+		category.setCategoryName("Burger");
+		category.setCategoryDesc("Best Value");
+		itemTwo.setItemName("Cheese Burger");
+		itemTwo.setItemPrice(6);
+		itemTwo.setCategory(category);
+		// perform post method
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/item/create")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(itemTwo)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.itemId", is(2)))
+		.andExpect(jsonPath("$.itemName", is("Cheese Burger")))
+		.andExpect(jsonPath("$.itemPrice", is(6)));
+	}
+	@Test
+	@DisplayName("Edit item")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void editItemHttpRequest() throws Exception{
+		// set edited item
+		category.setCategoryId(1);
+		category.setCategoryName("Pizza");
+		category.setCategoryDesc("Any Pizza, Any Toppings");
+		itemTwo.setItemId(1);
+		itemTwo.setItemName("Double Cheese Pizza");
+		itemTwo.setItemPrice(15);
+		itemTwo.setCategory(category);
+		// perform put method
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/item/edit")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(itemTwo)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.itemId", is(1)))
+		.andExpect(jsonPath("$.itemName", is("Double Cheese Pizza")))
+		.andExpect(jsonPath("$.itemPrice", is(15)));
+	}
+	@Test
+	@DisplayName("Edit item by id")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void editItemByIdHttpRequest() throws Exception{
+		// set edited item
+		itemDTO.setItemName("Double Cheese Pizza");
+		itemDTO.setItemPrice(15);
+		// perform patch method
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/item/edit/{id}", 1)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(itemDTO)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.itemId", is(1)))
+		.andExpect(jsonPath("$.itemName", is("Double Cheese Pizza")))
+		.andExpect(jsonPath("$.itemPrice", is(15)));
+	}
+	@Test
+	@DisplayName("Delete item by id")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void deleteItemByIdHttpRequest() throws Exception{
+		// perform delete method
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/item/delete/{id}", 1)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("text/plain;charset=UTF-8"))
+		.andExpect(content().string("Record is deleted successfully"));
+	}
 }

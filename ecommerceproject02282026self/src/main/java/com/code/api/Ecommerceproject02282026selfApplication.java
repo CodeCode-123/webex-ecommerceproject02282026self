@@ -12,6 +12,7 @@ import com.code.api.dto.CategoryDTO;
 import com.code.api.dto.ItemDTO;
 import com.code.api.dto.LoginDTO;
 import com.code.api.dto.RegisterDTO;
+import com.code.api.dto.UsersDTO;
 import com.code.api.entity.Category;
 import com.code.api.entity.Item;
 import com.code.api.entity.ItemOrder;
@@ -100,6 +101,11 @@ public class Ecommerceproject02282026selfApplication {
 	@Scope(value="prototype")
 	ItemDTO getItemDTO() {
 		return new ItemDTO();
+	}
+	@Bean(name="usersDTO")
+	@Scope(value="prototype")
+	UsersDTO getUsersDTO() {
+		return new UsersDTO();
 	}
 	@Bean(name="objectMapper")
 	@Scope(value="prototype")
