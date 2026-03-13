@@ -4,10 +4,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.code.api.dto.CategoryDTO;
+import com.code.api.dto.ItemDTO;
 import com.code.api.dto.LoginDTO;
 import com.code.api.dto.RegisterDTO;
 import com.code.api.entity.Category;
@@ -93,6 +95,11 @@ public class Ecommerceproject02282026selfApplication {
 	@Scope(value="prototype")
 	LoginDTO getLoginDTO() {
 		return new LoginDTO();
+	}
+	@Bean(name="itemDTO")
+	@Scope(value="prototype")
+	ItemDTO getItemDTO() {
+		return new ItemDTO();
 	}
 	@Bean(name="objectMapper")
 	@Scope(value="prototype")

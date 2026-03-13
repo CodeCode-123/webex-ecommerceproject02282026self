@@ -1,6 +1,7 @@
 package com.code.api.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +24,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import com.code.api.Ecommerceproject02282026selfApplication;
 import com.code.api.dto.CategoryDTO;
 import com.code.api.entity.Category;
-import com.code.api.repository.ICategoryRepository;
 import com.code.api.service.CategoryServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -32,9 +32,7 @@ import jakarta.persistence.PersistenceContext;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @TestPropertySource("/application-test.properties")
@@ -49,10 +47,6 @@ public class CategoryControllerTest {
 	private CategoryServiceImpl categoryServiceMock;
 	@Autowired
 	private JdbcTemplate jdbc;
-	@Autowired
-	private ICategoryRepository categoryRepository;
-	@Autowired
-	private CategoryServiceImpl categoryService;
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
@@ -90,7 +84,13 @@ public class CategoryControllerTest {
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType("application/json"))
-		.andExpect(jsonPath("$", hasSize(2)));
+		.andExpect(jsonPath("$", hasSize(2)))
+		.andExpect(jsonPath("$[0].categoryId", is(1)))
+		.andExpect(jsonPath("$[0].categoryName", is("Pizza")))
+		.andExpect(jsonPath("$[0].categoryDesc", is("Any Pizza, Any Toppings")))
+		.andExpect(jsonPath("$[1].categoryId", is(2)))
+		.andExpect(jsonPath("$[1].categoryName", is("Burger")))
+		.andExpect(jsonPath("$[1].categoryDesc", is("Best Value")));
 	}
 	@Test
 	@DisplayName("Get category by id")
