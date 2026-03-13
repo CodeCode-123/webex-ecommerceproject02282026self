@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.code.api.dto.CategoryDTO;
 import com.code.api.dto.LoginDTO;
 import com.code.api.dto.RegisterDTO;
 import com.code.api.entity.Category;
@@ -97,5 +98,10 @@ public class Ecommerceproject02282026selfApplication {
 	@Scope(value="prototype")
 	ObjectMapper getObjectMapper() {
 		return new ObjectMapper();
+	}
+	@Bean(name="categoryDTO")
+	@Scope(value="prototype")
+	CategoryDTO getCategoryDTO() {
+		return new CategoryDTO();
 	}
 }

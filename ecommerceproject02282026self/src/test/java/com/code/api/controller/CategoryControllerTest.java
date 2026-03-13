@@ -1,9 +1,10 @@
-package com.code.api;
+package com.code.api.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MediaType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import com.code.api.Ecommerceproject02282026selfApplication;
+import com.code.api.dto.CategoryDTO;
 import com.code.api.entity.Category;
 import com.code.api.repository.ICategoryRepository;
 import com.code.api.service.CategoryServiceImpl;
@@ -56,6 +59,8 @@ public class CategoryControllerTest {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private Category category;
+	@Autowired
+	private CategoryDTO categoryDTO;
 	public static final MediaType mediaType = MediaType.APPLICATION_JSON;
 	
 	@BeforeAll
@@ -74,8 +79,9 @@ public class CategoryControllerTest {
 		jdbc.execute("ALTER TABLE category ALTER COLUMN category_id RESTART WITH 1");
 	}
 	@Test
+	@DisplayName("Get all categories")
 	@WithMockUser(username="testuser", roles={"USER"})
-	public void getCategoryHttpRequest() throws Exception {
+	public void getAllCategoriesHttpRequest() throws Exception {
 		category.setCategoryName("Burger");
 		category.setCategoryDesc("Best Value");
 		entityManager.persist(category);
@@ -87,13 +93,14 @@ public class CategoryControllerTest {
 		.andExpect(jsonPath("$", hasSize(2)));
 	}
 	@Test
+	@DisplayName("Get category by id")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void getCategoryByIdHttpRequest() throws Exception {
 		category.setCategoryName("Burger");
 		category.setCategoryDesc("Best Value");
 		entityManager.persist(category);
 		entityManager.flush();
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/category/2")
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/category/{id}", 2)
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType("application/json"))
@@ -101,8 +108,80 @@ public class CategoryControllerTest {
 		.andExpect(jsonPath("$.categoryName", is("Burger")))
 		.andExpect(jsonPath("$.categoryDesc", is("Best Value")));
 	}
-
-	
-	
-
+	@Test
+	@DisplayName("Get category by searching name like")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void getCategoryBySearchNameHttpRequest() throws Exception {
+		category.setCategoryName("Burger");
+		category.setCategoryDesc("Best Value");
+		entityManager.persist(category);
+		entityManager.flush();
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/category/search/{catename}", "B")
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$").isArray()) 
+		.andExpect(jsonPath("$", hasSize(1)))
+		.andExpect(jsonPath("$[0].categoryId", is(2)))
+		.andExpect(jsonPath("$[0].categoryName", is("Burger")))
+		.andExpect(jsonPath("$[0].categoryDesc", is("Best Value")));
+	}
+	@Test
+	@DisplayName("Create a category")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void createCategoryHttpRequest() throws Exception {
+		category.setCategoryName("Burger");
+		category.setCategoryDesc("Best Value");
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/category/create")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(category)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.categoryId", is(2)))
+		.andExpect(jsonPath("$.categoryName", is("Burger")))
+		.andExpect(jsonPath("$.categoryDesc", is("Best Value")));
+	}
+	@Test
+	@DisplayName("Edit a category")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void editCategoryHttpRequest() throws Exception {
+		category.setCategoryId(1);
+		category.setCategoryName("Burger");
+		category.setCategoryDesc("Best Value");
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/category/edit")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(category)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.categoryId", is(1)))
+		.andExpect(jsonPath("$.categoryName", is("Burger")))
+		.andExpect(jsonPath("$.categoryDesc", is("Best Value")));
+	}
+	@Test
+	@DisplayName("Edit a category by id")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void editCategoryByIdHttpRequest() throws Exception {
+		categoryDTO.setCategoryDesc("Double Cheese Pizza");
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/category/edit/{id}", 1)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(categoryDTO)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.categoryId", is(1)))
+		.andExpect(jsonPath("$.categoryName", is("Pizza")))
+		.andExpect(jsonPath("$.categoryDesc", is("Double Cheese Pizza")));
+	}
+	@Test
+	@DisplayName("Delete a category by id")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void deleteategoryByIdHttpRequest() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/category/delete/{id}", 1)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("text/plain;charset=UTF-8"))
+		.andExpect(content().string("Record is deleted successfully"));
+	}
 }
