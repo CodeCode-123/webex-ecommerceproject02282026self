@@ -12,6 +12,7 @@ import com.code.api.dto.CategoryDTO;
 import com.code.api.dto.ItemDTO;
 import com.code.api.dto.LoginDTO;
 import com.code.api.dto.OrderDetailsDTO;
+import com.code.api.dto.OrderRequestDTO;
 import com.code.api.dto.RegisterDTO;
 import com.code.api.dto.UsersDTO;
 import com.code.api.entity.Category;
@@ -122,5 +123,10 @@ public class Ecommerceproject02282026selfApplication {
 	@Scope(value="prototype")
 	OrderDetailsDTO getOrderDetailsDTO() {
 		return new OrderDetailsDTO();
+	}
+	@Bean(name="orderRequestDTO")
+	@Scope(value="prototype")
+	OrderRequestDTO getOrderRequestDTO() {
+		return new OrderRequestDTO();
 	}
 }
