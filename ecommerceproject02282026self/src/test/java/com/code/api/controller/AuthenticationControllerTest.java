@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -62,6 +63,12 @@ public class AuthenticationControllerTest {
 	private MockMvc mockMvc;
 	@Autowired
 	private ObjectMapper objectMapper;
+	@Value("${SQL_ADD_USERS_ONE}")
+	private String sqlAddUsersOne;
+	@Value("${SQL_DELETE_USERS}")
+	private String sqlDeleteUsers;
+	@Value("${SQL_RESET_USERS}")
+	private String sqlResetUsers;
 	
 	@BeforeAll
 	public static void setup() {
@@ -73,16 +80,14 @@ public class AuthenticationControllerTest {
 	}
 	@BeforeEach
 	public void setupDatabase() {
-		jdbc.execute("INSERT INTO users (first_name, last_name, gender, languages, email_id, country, password, role) "
-				+ "VALUES('test', 'test', 'male', ARRAY['Java', 'C', 'C#'], 'test@abc.com', 'USA', '123456', 'Admin')");
+		jdbc.update(sqlAddUsersOne);
 	}
 	@AfterEach
 	public void setupAfterTransaction() {
-		jdbc.execute("DELETE FROM users");
-		jdbc.execute("ALTER TABLE users ALTER COLUMN user_id RESTART WITH 1");
+		jdbc.execute(sqlDeleteUsers);
+		jdbc.execute(sqlResetUsers);
 	}
 
-	
 	@Test
 	@DisplayName("Test Registration")
 	void testRegistrationHttpRequest() throws Exception {

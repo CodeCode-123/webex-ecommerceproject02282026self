@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.code.api.dto.CategoryDTO;
 import com.code.api.dto.ItemDTO;
 import com.code.api.dto.LoginDTO;
+import com.code.api.dto.OrderDetailsDTO;
 import com.code.api.dto.RegisterDTO;
 import com.code.api.dto.UsersDTO;
 import com.code.api.entity.Category;
@@ -116,5 +117,10 @@ public class Ecommerceproject02282026selfApplication {
 	@Scope(value="prototype")
 	CategoryDTO getCategoryDTO() {
 		return new CategoryDTO();
+	}
+	@Bean(name="orderDetailsDTO")
+	@Scope(value="prototype")
+	OrderDetailsDTO getOrderDetailsDTO() {
+		return new OrderDetailsDTO();
 	}
 }

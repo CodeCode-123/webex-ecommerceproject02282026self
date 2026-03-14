@@ -4,6 +4,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.http.MediaType;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -70,6 +71,19 @@ public class ItemControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 	private static final MediaType mediaType=MediaType.APPLICATION_JSON;
+	@Value("${SQL_ADD_CATEGORY_ONE}")
+	private String sqlAddCategoryOne;
+	@Value("${SQL_ADD_CATEGORY_TWO}")
+	private String sqlAddCategoryTwo;
+	@Value("${SQL_DELETE_CATEGORY}")
+	private String sqlDeleteCategory;
+	@Value("${SQL_RESET_CATEGORY}")
+	private String sqlResetCategory;
+	@Value("${SQL_DELETE_ITEM}")
+	private String sqlDeleteItem;
+	@Value("${SQL_RESET_ITEM}")
+	private String sqlResetItem;
+	
 	@BeforeAll
 	public static void setup() {
 		request = new MockHttpServletRequest();
@@ -79,38 +93,24 @@ public class ItemControllerTest {
 	@BeforeEach
 	public void setupDatabase() {
 		// insert two categories
-		jdbc.execute("INSERT INTO category(category_name, category_desc) VALUES('Pizza', 'Any Pizza, Any Toppings')");	
-		jdbc.execute("INSERT INTO category(category_name, category_desc) VALUES('Burger', 'Best Value')");
+		jdbc.execute(sqlAddCategoryOne);
+		jdbc.execute(sqlAddCategoryTwo);
 		// set an item and save it to the database
-		category.setCategoryId(1);
-		category.setCategoryName("Pizza");
-		category.setCategoryDesc("Any Pizza, Any Toppings");
-		itemOne.setItemName("Cheese Pizza");
-		itemOne.setItemPrice(10);
-		itemOne.setCategory(category);
-		entityManager.persist(itemOne);
-		entityManager.flush();
+		String sqlAddItem = "INSERT INTO item(item_name, item_price, category_id) VALUES(?,?,?)";
+		jdbc.update(sqlAddItem, "Cheese Pizza", 10, 1);
+		jdbc.update(sqlAddItem, "Cheese Burger", 6, 2);
 	}
 	@AfterEach
 	public void setupAfterTransaction() {
-		jdbc.execute("DELETE FROM item");
-		jdbc.execute("ALTER TABLE item ALTER COLUMN item_id RESTART WITH 1");
-		jdbc.execute("DELETE FROM category");
-		jdbc.execute("ALTER TABLE category ALTER COLUMN category_id RESTART WITH 1");
+		jdbc.execute(sqlDeleteItem);
+		jdbc.execute(sqlResetItem);
+		jdbc.execute(sqlDeleteCategory);
+		jdbc.execute(sqlResetCategory);
 	}
 	@Test
 	@DisplayName("Get all items")
 	@WithMockUser(username="testUser", roles= {"USER"})
 	public void getAllItemsHttpRequest() throws Exception{
-		// set another item and save it to the database
-		category.setCategoryId(2);
-		category.setCategoryName("Burger");
-		category.setCategoryDesc("Best Value");
-		itemTwo.setItemName("Cheese Burger");
-		itemTwo.setItemPrice(6);
-		itemTwo.setCategory(category);
-		entityManager.persist(itemTwo);
-		entityManager.flush();
 		// perform get method
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/item/")
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
@@ -128,15 +128,6 @@ public class ItemControllerTest {
 	@DisplayName("Get item by id")
 	@WithMockUser(username="testUser", roles= {"USER"})
 	public void getItemByIdHttpRequest() throws Exception{
-		// set another item and save it to the database
-		category.setCategoryId(2);
-		category.setCategoryName("Burger");
-		category.setCategoryDesc("Best Value");
-		itemTwo.setItemName("Cheese Burger");
-		itemTwo.setItemPrice(6);
-		itemTwo.setCategory(category);
-		entityManager.persist(itemTwo);
-		entityManager.flush();
 		// perform get method
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/item/{id}", 2)
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
@@ -154,8 +145,8 @@ public class ItemControllerTest {
 		category.setCategoryId(2);
 		category.setCategoryName("Burger");
 		category.setCategoryDesc("Best Value");
-		itemTwo.setItemName("Cheese Burger");
-		itemTwo.setItemPrice(6);
+		itemTwo.setItemName("Double Cheese Burger");
+		itemTwo.setItemPrice(8);
 		itemTwo.setCategory(category);
 		// perform post method
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/item/create")
@@ -164,9 +155,9 @@ public class ItemControllerTest {
 				.content(objectMapper.writeValueAsString(itemTwo)))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType("application/json"))
-		.andExpect(jsonPath("$.itemId", is(2)))
-		.andExpect(jsonPath("$.itemName", is("Cheese Burger")))
-		.andExpect(jsonPath("$.itemPrice", is(6)));
+		.andExpect(jsonPath("$.itemId", is(3)))
+		.andExpect(jsonPath("$.itemName", is("Double Cheese Burger")))
+		.andExpect(jsonPath("$.itemPrice", is(8)));
 	}
 	@Test
 	@DisplayName("Edit item")

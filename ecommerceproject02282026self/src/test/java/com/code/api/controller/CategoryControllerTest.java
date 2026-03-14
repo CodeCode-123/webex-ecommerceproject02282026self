@@ -10,6 +10,7 @@ import org.junit.jupiter.api.MediaType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -56,6 +57,12 @@ public class CategoryControllerTest {
 	@Autowired
 	private CategoryDTO categoryDTO;
 	public static final MediaType mediaType = MediaType.APPLICATION_JSON;
+	@Value("${SQL_ADD_CATEGORY_ONE}")
+	private String sqlAddCategoryOne;
+	@Value("${SQL_DELETE_CATEGORY}")
+	private String sqlDeleteCategory;
+	@Value("${SQL_RESET_CATEGORY}")
+	private String sqlResetCategory;
 	
 	@BeforeAll
 	public static void setup() {
@@ -65,12 +72,12 @@ public class CategoryControllerTest {
 	}
 	@BeforeEach
 	public void setupDatabase() {
-		jdbc.execute("INSERT INTO category(category_name, category_desc) VALUES('Pizza', 'Any Pizza, Any Toppings')");	
+		jdbc.execute(sqlAddCategoryOne);	
 	}
 	@AfterEach
 	public void setupAfterTransaction() {
-		jdbc.execute("DELETE FROM category");
-		jdbc.execute("ALTER TABLE category ALTER COLUMN category_id RESTART WITH 1");
+		jdbc.execute(sqlDeleteCategory);
+		jdbc.execute(sqlResetCategory);
 	}
 	@Test
 	@DisplayName("Get all categories")
