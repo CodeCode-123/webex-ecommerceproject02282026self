@@ -25,7 +25,7 @@ public class UsersController {
 	@GetMapping("/{id}")
 	public Users getUserById(@PathVariable int id) {
 		Optional<Users> users = userService.getUserById(id);
-		if (users == null) {
+		if (users.isEmpty()) {
 			throw new ResourceNotFoundException("Users", "id", String.valueOf(id));
 		}
 		return userService.getUserById(id).get();
@@ -33,7 +33,7 @@ public class UsersController {
 	@GetMapping("/search/{emailId}")
 	public Users getUserByEmailId(@PathVariable String emailId) {
 		Optional<Users> users = userService.getUserByEmailId(emailId);
-		if (users == null) {
+		if (users.isEmpty()) {
 			throw new ResourceNotFoundException("Users", "emailId", emailId);
 		}
 		return userService.getUserByEmailId(emailId).get();
@@ -53,6 +53,9 @@ public class UsersController {
 	@PatchMapping("/edit/{id}")
 	public Users editUsersById(@PathVariable("id") int id, @RequestBody UsersDTO usersDTO) {
 		Optional<Users> dbUsers = userService.getUserById(id);
+		if (dbUsers.isEmpty()) {
+			throw new ResourceNotFoundException("Users", "id", String.valueOf(id));
+		}
 		if (usersDTO.getFirstName() != null && usersDTO.getFirstName().trim().length() > 0) {
 			dbUsers.get().setFirstName(usersDTO.getFirstName());
 		}
@@ -73,7 +76,7 @@ public class UsersController {
 	@DeleteMapping("/delete/{id}")
 	public String deleteUsers(@PathVariable("id") int id) {
 		Optional<Users> users = userService.getUserById(id);
-		if (users == null) {
+		if (users.isEmpty()) {
 			throw new ResourceNotFoundException("Users", "id", String.valueOf(id));
 		}
 		userService.deleteUserById(id);

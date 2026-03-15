@@ -27,7 +27,7 @@ public class OrderDetailsController {
 	}
 	@GetMapping("/{id}")
 	public ItemOrderDetails getOrderDetailsById(@PathVariable("id") int id) {
-		if (orderDetailsService.getById(id) == null) {
+		if (orderDetailsService.getById(id).isEmpty()) {
 			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(id));
 		}
 		return orderDetailsService.getById(id).get();
@@ -41,7 +41,7 @@ public class OrderDetailsController {
 	@PutMapping("/edit")
 	public ResponseEntity<ItemOrderDetails> editOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
 		int orderDetailsId = orderDetailsDTO.getItemOrderDetailsId();
-		if (orderDetailsService.getById(orderDetailsId) == null) {
+		if (orderDetailsService.getById(orderDetailsId).isEmpty()) {
 			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(orderDetailsId));
 		}
 		ItemOrderDetails orderDetails = generateOrderDetails(orderDetailsDTO);
@@ -52,7 +52,7 @@ public class OrderDetailsController {
 	@PatchMapping("/edit/{id}")
 	public ResponseEntity<ItemOrderDetails> editOrderDetailsById(@PathVariable("id") int id, @RequestBody OrderDetailsDTO orderDetailsDTO) {
 		Optional<ItemOrderDetails> dbItemOrderDetails = orderDetailsService.getById(id);
-		if (dbItemOrderDetails == null) {
+		if (dbItemOrderDetails.isEmpty()) {
 			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(id));
 		}
 		if (orderDetailsDTO.getItemOrder() != null && orderDetailsDTO.getItemOrder().getOrderId() > 0) {
@@ -60,7 +60,7 @@ public class OrderDetailsController {
 		}
 		if (orderDetailsDTO.getItem() != null && orderDetailsDTO.getItem().getItemId() > 0) {
 			Optional<Item> dbItem = itemService.getById(orderDetailsDTO.getItem().getItemId());
-			if (dbItem == null) {
+			if (dbItem.isEmpty()) {
 				throw new ResourceNotFoundException("Item", "itemId", String.valueOf(orderDetailsDTO.getItem().getItemId()));
 			}
 			dbItemOrderDetails.get().setItem(orderDetailsDTO.getItem());
@@ -79,7 +79,7 @@ public class OrderDetailsController {
 	}
 	@DeleteMapping("/delete/{id}")
 	public String deleteOrderDetails(@PathVariable("id") int id) {
-		if (orderDetailsService.getById(id) == null) {
+		if (orderDetailsService.getById(id).isEmpty()) {
 			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(id));
 		}
 		orderDetailsService.deleteById(id);
@@ -90,7 +90,7 @@ public class OrderDetailsController {
 			throw new ResourceNotFoundException("ItemOrderDetails", "item", orderDetailsDTO.getItem().toString());
 		}
 		int itemId = orderDetailsDTO.getItem().getItemId();
-		if (itemService.getById(itemId) == null) {
+		if (itemService.getById(itemId).isEmpty()) {
 			throw new ResourceNotFoundException("Item", "itemId", String.valueOf(itemId));
 		}
 		ItemOrderDetails tempItemOrderDetails = new ItemOrderDetails();

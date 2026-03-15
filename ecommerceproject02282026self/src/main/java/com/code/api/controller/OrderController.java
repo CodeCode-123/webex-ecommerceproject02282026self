@@ -32,7 +32,7 @@ public class OrderController {
 	}
 	@GetMapping("/{id}")
 	public ItemOrder getOrderById(@PathVariable("id") int id) {
-		if (itemOrderService.getById(id) == null) {
+		if (itemOrderService.getById(id).isEmpty()) {
 			throw new ResourceNotFoundException("ItemOrder", "itemOrderId", String.valueOf(id));
 		}
 		return itemOrderService.getById(id).get();
@@ -42,8 +42,9 @@ public class OrderController {
 		Users users = null;
 		if (orderRequestDTO.getUsers() != null && orderRequestDTO.getUsers().getId() > 0) {
 			int userId = orderRequestDTO.getUsers().getId();
-			users = userService.getUserById(userId).get();
-			if (users != null) {
+			Optional<Users> tempUsers = userService.getUserById(userId);
+			if (!tempUsers.isEmpty()) {
+				users = tempUsers.get();
 				System.out.println("User id: " + userId);
 			}
 		}
@@ -57,13 +58,12 @@ public class OrderController {
 		String formattedDate = nowTime.format(formatter);
 		order.setOrderDate(formattedDate);
 		System.out.println("Order date: " + order.getOrderDate());
-		//order.setTotalAmount();
 		itemOrderService.add(order);
 		if (orderRequestDTO.getItemOrderDetailsList() != null 
 				&& orderRequestDTO.getItemOrderDetailsList().size() > 0) {
 			List<ItemOrderDetails> itemOrderDetailsList = new ArrayList<>();
 			int tempId = 0;
-			Optional<ItemOrderDetails> tempDetails = null;
+			Optional<ItemOrderDetails> tempDetails;
 			int tempQty = 0;
 			double tempPrice = 0;
 			int tempTotal = 0;
@@ -89,7 +89,7 @@ public class OrderController {
 	}
 	@DeleteMapping("/delete/{id}")
 	public String deleteOrder(@PathVariable("id") int id) {
-		if (itemOrderService.getById(id) == null) {
+		if (itemOrderService.getById(id).isEmpty()) {
 			throw new ResourceNotFoundException("ItemOrder", "itemOrderId", String.valueOf(id));
 		}
 		itemOrderService.deleteById(id);

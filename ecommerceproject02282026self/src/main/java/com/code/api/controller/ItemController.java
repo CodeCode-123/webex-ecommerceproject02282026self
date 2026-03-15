@@ -24,7 +24,7 @@ public class ItemController {
 	@GetMapping("/{id}")
 	public Item getItemById(@PathVariable int id) {
 		Optional<Item> dbItem = itemService.getById(id);
-		if (dbItem == null) {
+		if (dbItem.isEmpty()) {
 			throw new ResourceNotFoundException("Item", "itemId", String.valueOf(id));
 		}
 		return itemService.getById(id).get();
@@ -40,7 +40,7 @@ public class ItemController {
 	@PatchMapping("/edit/{id}")
 	public Item editItemById(@PathVariable("id") int id, @RequestBody ItemDTO itemDTO) {
 		Optional<Item> dbItem = itemService.getById(id);
-		if (dbItem == null) {
+		if (dbItem.isEmpty()) {
 			throw new ResourceNotFoundException("Item", "itemId", String.valueOf(id));
 		}
 		if (itemDTO.getItemName() != null && itemDTO.getItemName().trim().length() > 0) {
@@ -60,7 +60,7 @@ public class ItemController {
 	@DeleteMapping("/delete/{id}")
 	public String deleteItem(@PathVariable("id") int id) {
 		Optional<Item> dbItem = itemService.getById(id);
-		if (dbItem == null) {
+		if (dbItem.isEmpty()) {
 			throw new ResourceNotFoundException("Item", "itemId", String.valueOf(id));
 		}
 		itemService.deleteById(id);

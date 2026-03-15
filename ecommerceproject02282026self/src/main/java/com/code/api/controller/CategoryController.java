@@ -36,7 +36,7 @@ public class CategoryController {
 	@GetMapping(value="/{id}")
 	public Category getCategoryById(@PathVariable int id) {
 		Optional<Category> dbCategory = categoryService.getById(id);
-		if (dbCategory == null) {
+		if (dbCategory.isEmpty()) {
 			throw new ResourceNotFoundException("Category", "categoryId", String.valueOf(id));
 		}
 		return categoryService.getById(id).get();
@@ -45,7 +45,7 @@ public class CategoryController {
 	@GetMapping(value="/search/{catname}")
 	public List<Category> search(@PathVariable("catname") String catname) {
 		List<Category> dbCategory = categoryService.search(catname);
-		if (dbCategory == null) {
+		if (dbCategory.isEmpty()) {
 			throw new ResourceNotFoundException("Category", "categoryName", catname);
 		}
 		return categoryService.search(catname);
@@ -61,7 +61,7 @@ public class CategoryController {
 	@PatchMapping(value="/edit/{id}")
 	public Category editCategoryById(@PathVariable("id") int id, @RequestBody CategoryDTO categoryDTO) {
 		Optional<Category> dbCategory = categoryService.getById(id);
-		if (dbCategory == null) {
+		if (dbCategory.isEmpty()) {
 			throw new ResourceNotFoundException("Category", "categoryId", String.valueOf(id));
 		}
 		if (categoryDTO.getCategoryName() != null && categoryDTO.getCategoryName().trim().length() > 0) {
@@ -75,7 +75,7 @@ public class CategoryController {
 	@DeleteMapping(value="/delete/{id}")
 	public String deleteCategory(@PathVariable("id") int id) {
 		Optional<Category> dbCategory = categoryService.getById(id);
-		if (dbCategory == null) {
+		if (dbCategory.isEmpty()) {
 			throw new ResourceNotFoundException("Category", "categoryId", String.valueOf(id));
 		}
 		categoryService.deleteById(id);

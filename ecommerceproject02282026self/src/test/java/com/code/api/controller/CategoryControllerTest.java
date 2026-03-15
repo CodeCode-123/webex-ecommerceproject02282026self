@@ -116,6 +116,22 @@ public class CategoryControllerTest {
 		.andExpect(jsonPath("$.categoryDesc", is("Best Value")));
 	}
 	@Test
+	@DisplayName("Get category by id not found")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void getCategoryByIdNotFoundHttpRequest() throws Exception {
+		category.setCategoryName("Burger");
+		category.setCategoryDesc("Best Value");
+		entityManager.persist(category);
+		entityManager.flush();
+		int categoryId = 3;
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/category/{id}", categoryId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().is4xxClientError())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Category was not found with the given input data categoryId: " + categoryId)));
+	}
+	@Test
 	@DisplayName("Get category by searching name like")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void getCategoryBySearchNameHttpRequest() throws Exception {
@@ -132,6 +148,22 @@ public class CategoryControllerTest {
 		.andExpect(jsonPath("$[0].categoryId", is(2)))
 		.andExpect(jsonPath("$[0].categoryName", is("Burger")))
 		.andExpect(jsonPath("$[0].categoryDesc", is("Best Value")));
+	}
+	@Test
+	@DisplayName("Get category by searching name like not found")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void getCategoryBySearchNameNotFoundHttpRequest() throws Exception {
+		category.setCategoryName("Burger");
+		category.setCategoryDesc("Best Value");
+		entityManager.persist(category);
+		entityManager.flush();
+		String categoryNameLike = "D";
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/category/search/{catename}", categoryNameLike)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().is4xxClientError())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Category was not found with the given input data categoryName: " + categoryNameLike)));
 	}
 	@Test
 	@DisplayName("Create a category")
@@ -182,6 +214,21 @@ public class CategoryControllerTest {
 		.andExpect(jsonPath("$.categoryDesc", is("Double Cheese Pizza")));
 	}
 	@Test
+	@DisplayName("Edit a category by id not found")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void editCategoryByIdNotFoundHttpRequest() throws Exception {
+		categoryDTO.setCategoryDesc("Double Cheese Pizza");
+		int categoryId = 4;
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/category/edit/{id}", categoryId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(categoryDTO)))
+		.andExpect(status().is4xxClientError())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Category was not found with the given input data categoryId: " + categoryId)));
+	}
+	@Test
 	@DisplayName("Delete a category by id")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void deleteategoryByIdHttpRequest() throws Exception {
@@ -190,5 +237,17 @@ public class CategoryControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(content().contentType("text/plain;charset=UTF-8"))
 		.andExpect(content().string("Record is deleted successfully"));
+	}
+	@Test
+	@DisplayName("Delete a category by id not existed")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void deleteategoryByIdNotExistedHttpRequest() throws Exception {
+		int categoryId = 10;
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/category/delete/{id}", categoryId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().is4xxClientError())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Category was not found with the given input data categoryId: " + categoryId)));
 	}
 }
