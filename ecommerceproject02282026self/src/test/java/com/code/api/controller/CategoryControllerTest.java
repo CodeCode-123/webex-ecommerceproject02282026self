@@ -123,6 +123,7 @@ public class CategoryControllerTest {
 		category.setCategoryDesc("Best Value");
 		entityManager.persist(category);
 		entityManager.flush();
+		// set a category id not found in the database
 		int categoryId = 3;
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/category/{id}", categoryId)
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
@@ -157,6 +158,7 @@ public class CategoryControllerTest {
 		category.setCategoryDesc("Best Value");
 		entityManager.persist(category);
 		entityManager.flush();
+		// set a category name like not found in the database
 		String categoryNameLike = "D";
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/category/search/{catename}", categoryNameLike)
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
@@ -218,6 +220,7 @@ public class CategoryControllerTest {
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void editCategoryByIdNotFoundHttpRequest() throws Exception {
 		categoryDTO.setCategoryDesc("Double Cheese Pizza");
+		// set the category id not found in the database
 		int categoryId = 4;
 		mockMvc.perform(MockMvcRequestBuilders.patch("/api/category/edit/{id}", categoryId)
 				.with(SecurityMockMvcRequestPostProcessors.jwt())
@@ -227,6 +230,21 @@ public class CategoryControllerTest {
 		.andExpect(content().contentType("application/json"))
 		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
 		.andExpect(jsonPath("$.errorMessage", is("Category was not found with the given input data categoryId: " + categoryId)));
+	}
+	@Test
+	@DisplayName("Edit a category by id bad request")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void editCategoryByIdBadRequestHttpRequest() throws Exception {
+		// set the category name to be empty, violating the categoryDTO validation
+		categoryDTO.setCategoryName("");
+		int categoryId = 1;
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/category/edit/{id}", categoryId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(categoryDTO)))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.categoryName", is("Category name should be at least 1 character")));
 	}
 	@Test
 	@DisplayName("Delete a category by id")
@@ -242,6 +260,7 @@ public class CategoryControllerTest {
 	@DisplayName("Delete a category by id not existed")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void deleteategoryByIdNotExistedHttpRequest() throws Exception {
+		// set the category id not found in the database
 		int categoryId = 10;
 		mockMvc.perform(MockMvcRequestBuilders.delete("/api/category/delete/{id}", categoryId)
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))

@@ -1,11 +1,15 @@
 package com.code.api.controller;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.code.api.service.IUserService;
+
+import jakarta.validation.Valid;
+
 import com.code.api.dto.UsersDTO;
 import com.code.api.entity.*;
 import com.code.api.exception.ResourceNotFoundException;
@@ -39,8 +43,15 @@ public class UsersController {
 		return userService.getUserByEmailId(emailId).get();
 	}
 	@PostMapping("/login")
-	public Users userLogin(@RequestParam("emailId") String emailId, @RequestParam("password") String password) {
-		return userService.getUserByEmailId(emailId, password);
+	public Users userLogin(@RequestParam("emailId") String emailId, @RequestParam("password") String password) throws Exception {
+		Optional<Users> users = userService.getUserByEmailId(emailId);
+		if (users.isEmpty()) {
+			throw new ResourceNotFoundException("Users", "emailId", emailId);
+		}
+		if (!users.get().getPassword().equals(password)) {
+			throw new Exception("Password does not match");
+		}
+		return users.get();
 	}
 	@PostMapping("/create")
 	public Users createUsers(@RequestBody Users users) {
@@ -51,7 +62,7 @@ public class UsersController {
 		return userService.updateUser(users);
 	}
 	@PatchMapping("/edit/{id}")
-	public Users editUsersById(@PathVariable("id") int id, @RequestBody UsersDTO usersDTO) {
+	public Users editUsersById(@PathVariable("id") int id, @Valid @RequestBody UsersDTO usersDTO) {
 		Optional<Users> dbUsers = userService.getUserById(id);
 		if (dbUsers.isEmpty()) {
 			throw new ResourceNotFoundException("Users", "id", String.valueOf(id));

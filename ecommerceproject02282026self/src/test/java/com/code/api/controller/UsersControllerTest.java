@@ -83,10 +83,18 @@ public class UsersControllerTest {
 		jdbc.execute(sqlDeleteUsers);
 		jdbc.execute(sqlResetUsers);
 	}
-	@Test
-	@DisplayName("Get all users")
-	@WithMockUser(username="testuser", roles={"USER"})
-	public void getAllUsersHttpRequest() throws Exception{
+	private Users setupUserOne() {
+		userOne.setId(1);
+		userOne.setFirstName("test1");
+		userOne.setLastName("test1");
+		userOne.setGender("male");
+		userOne.setLanguages(new String[] {"Java", "JavaScript", "TypeScript", "C++", "Python"});
+		userOne.setEmailId("test1@abc.com");
+		userOne.setCountry("France");
+		userOne.setPassword("123456");
+		return userOne;
+	}
+	private Users setupUserTwo() {
 		userTwo.setFirstName("John");
 		userTwo.setLastName("Doe");
 		userTwo.setGender("male");
@@ -94,8 +102,23 @@ public class UsersControllerTest {
 		userTwo.setEmailId("john.doe@abc.com");
 		userTwo.setCountry("France");
 		userTwo.setPassword("123456");
+		return userTwo;
+	}
+	private void createUserTwo() {
+		userTwo = setupUserTwo();
 		entityManager.persist(userTwo);
 		entityManager.flush();
+	}
+	private UsersDTO setupUsersDTO() {
+		String[] langs = new String[] {"Java", "JavaScript", "TypeScript", "C++", "Python"};
+		usersDTO.setLanguages(langs);
+		return usersDTO;
+	}
+	@Test
+	@DisplayName("Get all users")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void getAllUsersHttpRequest() throws Exception{
+		createUserTwo();
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/users/")
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
 		.andExpect(status().isOk())
@@ -110,15 +133,7 @@ public class UsersControllerTest {
 	@DisplayName("Get user by id")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void getUserByIdHttpRequest() throws Exception{
-		userTwo.setFirstName("John");
-		userTwo.setLastName("Doe");
-		userTwo.setGender("male");
-		userTwo.setLanguages(new String[] {"Java", "Python"});
-		userTwo.setEmailId("john.doe@abc.com");
-		userTwo.setCountry("France");
-		userTwo.setPassword("123456");
-		entityManager.persist(userTwo);
-		entityManager.flush();
+		createUserTwo();
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{id}", 1)
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
 		.andExpect(status().isOk())
@@ -129,18 +144,24 @@ public class UsersControllerTest {
 		.andExpect(jsonPath("$.emailId", is("test@abc.com")));
 	}
 	@Test
+	@DisplayName("Get user by id not found")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void getUserByIdNotFoundHttpRequest() throws Exception{
+		createUserTwo();
+		// set a users id not found in the database
+		int id = 3;
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{id}", id)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Users was not found with the given input data id: "+id)));
+	}
+	@Test
 	@DisplayName("Get user by emailId")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void getUserByEmailIdHttpRequest() throws Exception{
-		userTwo.setFirstName("John");
-		userTwo.setLastName("Doe");
-		userTwo.setGender("male");
-		userTwo.setLanguages(new String[] {"Java", "Python"});
-		userTwo.setEmailId("john.doe@abc.com");
-		userTwo.setCountry("France");
-		userTwo.setPassword("123456");
-		entityManager.persist(userTwo);
-		entityManager.flush();
+		createUserTwo();
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/users/search/{emailId}", "john.doe@abc.com")
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
 		.andExpect(status().isOk())
@@ -151,18 +172,24 @@ public class UsersControllerTest {
 		.andExpect(jsonPath("$.emailId", is("john.doe@abc.com")));
 	}
 	@Test
+	@DisplayName("Get user by emailId not found")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void getUserByEmailIdNotFoundHttpRequest() throws Exception{
+		createUserTwo();
+		// set an email id not found in the database
+		String emailId = "notfound@abc.com";
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/users/search/{emailId}", emailId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Users was not found with the given input data emailId: "+emailId)));
+	}
+	@Test
 	@DisplayName("Login with email and password")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void loginHttpRequest() throws Exception{
-		userTwo.setFirstName("John");
-		userTwo.setLastName("Doe");
-		userTwo.setGender("male");
-		userTwo.setLanguages(new String[] {"Java", "Python"});
-		userTwo.setEmailId("john.doe@abc.com");
-		userTwo.setCountry("France");
-		userTwo.setPassword("123456");
-		entityManager.persist(userTwo);
-		entityManager.flush();
+		createUserTwo();
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/users/login")
 				.with(SecurityMockMvcRequestPostProcessors.jwt())
 				.param("emailId", "test@abc.com")
@@ -175,16 +202,23 @@ public class UsersControllerTest {
 		.andExpect(jsonPath("$.emailId", is("test@abc.com")));
 	}
 	@Test
+	@DisplayName("Login with email and password internal server error")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void loginBadRequestHttpRequest() throws Exception{
+		createUserTwo();
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/users/login")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.param("emailId", "test@abc.com")
+				.param("password", "12345678")) // set a password does not match the password retrieved from the database
+		.andExpect(status().isInternalServerError())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorMessage", is("Password does not match")));
+	}
+	@Test
 	@DisplayName("Create a user")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void createUsersHttpRequest() throws Exception{
-		userTwo.setFirstName("John");
-		userTwo.setLastName("Doe");
-		userTwo.setGender("male");
-		userTwo.setLanguages(new String[] {"Java", "Python"});
-		userTwo.setEmailId("john.doe@abc.com");
-		userTwo.setCountry("France");
-		userTwo.setPassword("123456");
+		userTwo = setupUserTwo();
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/users/create")
 				.with(SecurityMockMvcRequestPostProcessors.jwt())
 				.contentType("application/json")
@@ -200,14 +234,7 @@ public class UsersControllerTest {
 	@DisplayName("Edit a user")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void editUsersHttpRequest() throws Exception{
-		userOne.setId(1);
-		userOne.setFirstName("test1");
-		userOne.setLastName("test1");
-		userOne.setGender("male");
-		userOne.setLanguages(new String[] {"Java", "JavaScript", "TypeScript", "C++", "Python"});
-		userOne.setEmailId("test1@abc.com");
-		userOne.setCountry("France");
-		userOne.setPassword("123456");
+		userOne = setupUserOne();
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/users/edit")
 				.with(SecurityMockMvcRequestPostProcessors.jwt())
 				.contentType("application/json")
@@ -222,8 +249,7 @@ public class UsersControllerTest {
 	@DisplayName("Edit a user by id")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void editUsersByIdHttpRequest() throws Exception{
-		String[] langs = new String[] {"Java", "JavaScript", "TypeScript", "C++", "Python"};
-		usersDTO.setLanguages(langs);
+		usersDTO = setupUsersDTO();
 		mockMvc.perform(MockMvcRequestBuilders.patch("/api/users/edit/{id}", 1)
 				.with(SecurityMockMvcRequestPostProcessors.jwt())
 				.contentType("application/json")
@@ -233,19 +259,65 @@ public class UsersControllerTest {
 		.andExpect(jsonPath("$.id", is(1)))
 		.andExpect(jsonPath("$.firstName", is("test")))
 		.andExpect(jsonPath("$.languages.length()", is(5)))
-		.andExpect(jsonPath("$.languages[0]", is(langs[0])))
-		.andExpect(jsonPath("$.languages[4]", is(langs[4])));
+		.andExpect(jsonPath("$.languages[0]", is("Java")))
+		.andExpect(jsonPath("$.languages[4]", is("Python")));
+	}
+	@Test
+	@DisplayName("Edit a user by id not found")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void editUsersByIdNotFoundHttpRequest() throws Exception{
+		usersDTO = setupUsersDTO();
+		// set an id not found in the database
+		int id = 4;
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/users/edit/{id}", id)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(usersDTO)))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Users was not found with the given input data id: "+id)));
+	}
+	@Test
+	@DisplayName("Edit a user by id bad request")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void editUsersByIdBadRequestHttpRequest() throws Exception{
+		// set an invalid first name
+		usersDTO.setFirstName("");
+		// set an invalid last name
+		usersDTO.setLastName("");
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/users/edit/{id}", 1)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(usersDTO)))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.firstName", is("First name should be at least 1 character")))
+		.andExpect(jsonPath("$.lastName", is("Last name should be at least 1 character")));
 	}
 	@Test
 	@DisplayName("delete a user by id")
 	@WithMockUser(username="testuser", roles={"USER"})
 	public void deleteUsersByIdHttpRequest() throws Exception{
-		String[] langs = new String[] {"Java", "JavaScript", "TypeScript", "C++", "Python"};
-		usersDTO.setLanguages(langs);
+		usersDTO = setupUsersDTO();
 		mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/delete/{id}", 1)
 				.with(SecurityMockMvcRequestPostProcessors.jwt()))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType("text/plain;charset=UTF-8"))
 		.andExpect(content().string("Record is deleted successfully"));
+	}
+	@Test
+	@DisplayName("delete a user by id not found")
+	@WithMockUser(username="testuser", roles={"USER"})
+	public void deleteUsersByIdNotFoundHttpRequest() throws Exception{
+		usersDTO = setupUsersDTO();
+		// set an id not found in the database
+		int id = 4;
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/delete/{id}", id)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Users was not found with the given input data id: "+id)));
 	}
 }

@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.code.api.service.IItemService;
+
+import jakarta.validation.Valid;
+
 import com.code.api.dto.ItemDTO;
 import com.code.api.entity.*;
 import com.code.api.exception.ResourceNotFoundException;
@@ -38,7 +41,7 @@ public class ItemController {
 		return itemService.update(item);
 	}
 	@PatchMapping("/edit/{id}")
-	public Item editItemById(@PathVariable("id") int id, @RequestBody ItemDTO itemDTO) {
+	public Item editItemById(@PathVariable("id") int id, @Valid @RequestBody ItemDTO itemDTO) {
 		Optional<Item> dbItem = itemService.getById(id);
 		if (dbItem.isEmpty()) {
 			throw new ResourceNotFoundException("Item", "itemId", String.valueOf(id));

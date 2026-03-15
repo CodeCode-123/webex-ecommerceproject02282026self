@@ -21,6 +21,8 @@ import com.code.api.entity.Users;
 import com.code.api.exception.ResourceNotFoundException;
 import com.code.api.service.*;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/category/")
 public class CategoryController {
@@ -59,7 +61,7 @@ public class CategoryController {
 		return categoryService.update(category);
 	}
 	@PatchMapping(value="/edit/{id}")
-	public Category editCategoryById(@PathVariable("id") int id, @RequestBody CategoryDTO categoryDTO) {
+	public Category editCategoryById(@PathVariable("id") int id, @Valid @RequestBody CategoryDTO categoryDTO) {
 		Optional<Category> dbCategory = categoryService.getById(id);
 		if (dbCategory.isEmpty()) {
 			throw new ResourceNotFoundException("Category", "categoryId", String.valueOf(id));

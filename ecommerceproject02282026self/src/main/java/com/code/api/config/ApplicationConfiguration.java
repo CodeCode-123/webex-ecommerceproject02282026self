@@ -21,19 +21,19 @@ public class ApplicationConfiguration {
 	public ApplicationConfiguration(IUsersRepository userRepository) {
 		this.userRepository = userRepository;
 	}
-	
-	@Bean
-    public UserDetailsService userDetailsService() {
+
+    @Bean
+    UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmailId(username)
         		.orElseThrow(() -> new UsernameNotFoundException("User not found"));
                
     }
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 		
 	}

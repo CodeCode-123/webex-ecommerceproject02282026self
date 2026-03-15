@@ -29,6 +29,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.contentOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -138,6 +139,19 @@ public class ItemControllerTest {
 		.andExpect(jsonPath("$.itemPrice", is(6)));
 	}
 	@Test
+	@DisplayName("Get item by id not found")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void getItemByIdNotFoundHttpRequest() throws Exception{
+		// set item id not found in the database
+		int itemId = 10;
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/item/{id}", itemId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().is4xxClientError())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Item was not found with the given input data itemId: "+itemId)));
+	}
+	@Test
 	@DisplayName("Create item")
 	@WithMockUser(username="testUser", roles= {"USER"})
 	public void createItemHttpRequest() throws Exception{
@@ -158,6 +172,28 @@ public class ItemControllerTest {
 		.andExpect(jsonPath("$.itemId", is(3)))
 		.andExpect(jsonPath("$.itemName", is("Double Cheese Burger")))
 		.andExpect(jsonPath("$.itemPrice", is(8)));
+	}
+	@Test
+	@DisplayName("Create item internal server error")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void createItemInternalServerErrorHttpRequest() throws Exception{
+		// set another item with a categoryId not found
+		int categoryId = 3;
+		category.setCategoryId(categoryId);
+		category.setCategoryName("Burger");
+		category.setCategoryDesc("Best Value");
+		itemTwo.setItemName("Double Cheese Burger");
+		itemTwo.setItemPrice(8);
+		itemTwo.setCategory(category);
+		// perform post method
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/item/create")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(itemTwo)))
+		.andExpect(status().is5xxServerError())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("500 INTERNAL_SERVER_ERROR")))
+		.andExpect(jsonPath("$.errorMessage", containsString("could not execute statement")));
 	}
 	@Test
 	@DisplayName("Edit item")
@@ -201,6 +237,43 @@ public class ItemControllerTest {
 		.andExpect(jsonPath("$.itemPrice", is(15)));
 	}
 	@Test
+	@DisplayName("Edit item by id not found")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void editItemByIdNotFoundHttpRequest() throws Exception{
+		// set edited item
+		itemDTO.setItemName("Double Cheese Pizza");
+		itemDTO.setItemPrice(15);
+		// set item id not found in the database
+		int itemId = 4;
+		// perform patch method
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/item/edit/{id}", itemId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(itemDTO)))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Item was not found with the given input data itemId: "+itemId)));
+	}
+	@Test
+	@DisplayName("Edit item by id bad request")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void editItemByIdBadRequestHttpRequest() throws Exception{
+		// set an invalid item name
+		itemDTO.setItemName("");
+		// set an invalid item price
+		itemDTO.setItemPrice(-15);
+		// perform patch method
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/item/edit/{id}", 1)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(itemDTO)))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.itemName", is("Item name should be at least 1 character")))
+		.andExpect(jsonPath("$.itemPrice", is("Price should not be negative")));
+	}
+	@Test
 	@DisplayName("Delete item by id")
 	@WithMockUser(username="testUser", roles= {"USER"})
 	public void deleteItemByIdHttpRequest() throws Exception{
@@ -210,5 +283,19 @@ public class ItemControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(content().contentType("text/plain;charset=UTF-8"))
 		.andExpect(content().string("Record is deleted successfully"));
+	}
+	@Test
+	@DisplayName("Delete item by id not found")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void deleteItemByIdNotFoundHttpRequest() throws Exception{
+		// set an item id not found
+		int itemId = 3;
+		// perform delete method
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/item/delete/{id}", itemId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Item was not found with the given input data itemId: "+itemId)));
 	}
 }

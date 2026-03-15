@@ -47,7 +47,7 @@ import jakarta.persistence.PersistenceContext;
 public class AuthenticationControllerTest {
 	private static MockHttpServletRequest request;
 	@PersistenceContext
-	private EntityManager entityManger;
+	private EntityManager entityManager;
 	@Mock
 	private JwtService jwtService;
 	@Mock
@@ -56,7 +56,7 @@ public class AuthenticationControllerTest {
 	private JdbcTemplate jdbc;
 	
 	@Autowired
-	private RegisterDTO registerDTO;
+	private RegisterDTO registerDTO;	
 	@Autowired
 	private LoginDTO loginDTO;
 	@Autowired
@@ -105,15 +105,25 @@ public class AuthenticationControllerTest {
 		.andExpect(jsonPath("$.lastName", is("Doe")))
 		.andExpect(jsonPath("$.emailId", is("john.doe@abc.com")));
 	}
-//	@Test
-//	@DisplayName("Test Login")
-//	void testLoginHttpRequest() throws Exception {
-//		loginDTO.setEmail("test@abc.com");
-//		loginDTO.setPassword("123456");
-//		mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
-//				.contentType(APPLICATION_JSON)
-//				.content(objectMapper.writeValueAsString(loginDTO)))
-//		.andExpect(status().isOk())
-//		.andExpect(content().contentType("application/json"));
-//	}
+	@Test
+	@DisplayName("Test Registration bad request")
+	void testRegistrationBadRequestHttpRequest() throws Exception {
+		// set an invalid first name
+		registerDTO.setFirstName("");
+		// set an invalid last name
+		registerDTO.setLastName(" ");
+		// set an invalid email
+		registerDTO.setEmail("john.doe");
+		// set an invalid password
+		registerDTO.setPassword("1234");
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/signup")				
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(registerDTO)))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.firstName", is("First name is required")))
+		.andExpect(jsonPath("$.lastName", is("Last name is required")))
+		.andExpect(jsonPath("$.email", is("Invalid email format")))
+		.andExpect(jsonPath("$.password", is("Password must be between 6 to 12 characters")));
+	}
 }
