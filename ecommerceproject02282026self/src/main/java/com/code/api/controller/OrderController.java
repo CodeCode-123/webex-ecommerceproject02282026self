@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
 import com.code.api.service.*;
+
+import jakarta.validation.Valid;
+
 import com.code.api.dto.OrderRequestDTO;
 import com.code.api.entity.*;
 import com.code.api.exception.ResourceNotFoundException;
@@ -38,7 +41,7 @@ public class OrderController {
 		return itemOrderService.getById(id).get();
 	}
 	@PostMapping("/placeorder") // create an order with items and users
-	public ResponseEntity<ItemOrder> placeOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
+	public ResponseEntity<ItemOrder> placeOrder(@Valid @RequestBody OrderRequestDTO orderRequestDTO) {
 		Users users = null;
 		if (orderRequestDTO.getUsers() != null && orderRequestDTO.getUsers().getId() > 0) {
 			int userId = orderRequestDTO.getUsers().getId();

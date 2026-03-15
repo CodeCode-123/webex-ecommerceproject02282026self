@@ -1,9 +1,5 @@
 package com.code.api.controller;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -37,16 +33,10 @@ import com.code.api.entity.Users;
 import com.code.api.service.ItemOrderServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PersistenceContext;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @TestPropertySource("/application-test.properties")
@@ -184,6 +174,7 @@ public class OrderControllerTest {
 	}
 	@Test
 	@DisplayName("Get orders by id")
+	@WithMockUser(username="testUser", roles={"USER"})
 	public void getOrdersByIdHttpRequest() throws Exception {
 		createItemOrderOne();
 		createItemOrderTwo();
@@ -196,7 +187,25 @@ public class OrderControllerTest {
 		.andExpect(jsonPath("$.totalAmount", is(18.0)));
 	}
 	@Test
+	@DisplayName("Get orders by id not found")
+	@WithMockUser(username="testUser", roles={"USER"})
+	public void getOrdersByIdNotFoundHttpRequest() throws Exception {
+		createItemOrderOne();
+		createItemOrderTwo();
+		// set an itemOrderId not found in the database
+		int itemOrderId = 0;
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/{id}", itemOrderId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", 
+				is("ItemOrder was not found with the given input data itemOrderId: "
+						+ itemOrderId)));
+	}
+	@Test
 	@DisplayName("Create orders")
+	@WithMockUser(username="testUser", roles={"USER"})
 	public void createOrdersHttpRequest() throws Exception {
 		users = createUsers();
 		orderRequestDTO.setUsers(users);
@@ -223,7 +232,27 @@ public class OrderControllerTest {
 		.andExpect(jsonPath("$.totalAmount", is(38.0)));	
 	}
 	@Test
+	@DisplayName("Create orders bad request")
+	@WithMockUser(username="testUser", roles={"USER"})
+	public void createOrdersBadRequestHttpRequest() throws Exception {
+		users = createUsers();
+		orderRequestDTO.setUsers(users);
+	    ItemOrderDetails itemOrderDetailsOne = entityManager.find(ItemOrderDetails.class, 1);
+	    ItemOrderDetails itemOrderDetailsTwo = entityManager.find(ItemOrderDetails.class, 2);
+		orderRequestDTO.setItemOrderDetailsList(List.of(itemOrderDetailsOne, itemOrderDetailsTwo));
+		// set an invalid totalAmount
+		orderRequestDTO.setTotalAmount(-10);
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/orders/placeorder")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(orderRequestDTO)))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.totalAmount", is("Total amount should not be negative")));
+	}
+	@Test
 	@DisplayName("Delete orders by id")
+	@WithMockUser(username="testUser", roles={"USER"})
 	public void deleteOrdersByIdHttpRequest() throws Exception {
 		createItemOrderOne();
 		createItemOrderTwo();
@@ -232,5 +261,22 @@ public class OrderControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(content().contentType("text/plain;charset=UTF-8"))
 		.andExpect(content().string("Record is deleted successfully"));
+	}
+	@Test
+	@DisplayName("Delete orders by id not found")
+	@WithMockUser(username="testUser", roles={"USER"})
+	public void deleteOrdersByIdNotFoundHttpRequest() throws Exception {
+		createItemOrderOne();
+		createItemOrderTwo();
+		// set an itemOrderId not found in the database
+		int itemOrderId = 0;
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/orders/delete/{id}", itemOrderId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", 
+				is("ItemOrder was not found with the given input data itemOrderId: "
+						+ itemOrderId)));
 	}
 }
