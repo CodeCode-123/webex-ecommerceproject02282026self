@@ -11,7 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderDetailsDTO {
-	@Min(value=1, message="Item order details id should be at least 1")
 	private int itemOrderDetailsId;
 	private Item item;
 	@Min(value=1, message="Quantity should be at least 1")

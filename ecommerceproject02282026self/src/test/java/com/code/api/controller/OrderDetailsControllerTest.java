@@ -164,6 +164,21 @@ public class OrderDetailsControllerTest {
 		.andExpect(jsonPath("$.itemValue", is(18.0)));
 	}
 	@Test
+	@DisplayName("Get item order details by id not found")
+	@WithMockUser(username="testUser", roles={"USER"})
+	public void getItemOrderDetailsByIdNotFoundHttpRequest() throws Exception {
+		// setup an item order details id not found in the database
+		int itemOrderDetailsId = 0;
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/orderdetails/{id}", itemOrderDetailsId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", 
+				is("ItemOrderDetails was not found with the given input data itemOrderDetailsId: "
+						+ itemOrderDetailsId)));
+	}
+	@Test
 	@DisplayName("Create item order details")
 	@WithMockUser(username="testUser", roles={"USER"})
 	public void createItemOrderDetailsHttpRequest() throws Exception {
@@ -177,6 +192,24 @@ public class OrderDetailsControllerTest {
 		.andExpect(jsonPath("$.item.itemName", is("Double Cheese Pizza")))
 		.andExpect(jsonPath("$.qty", is(3)))
 		.andExpect(jsonPath("$.itemValue", is(45.0)));
+	}
+	@Test
+	@DisplayName("Create item order details bad request")
+	@WithMockUser(username="testUser", roles={"USER"})
+	public void createItemOrderDetailsBadRequestHttpRequest() throws Exception {
+		orderDetailsDTO = createItemOrderDetailsDTO();
+		// set an invalid qty
+		orderDetailsDTO.setQty(0);
+		// set an invalid itemValue
+		orderDetailsDTO.setItemValue(-20);
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/orderdetails/create")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(orderDetailsDTO)))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.qty", is("Quantity should be at least 1")))
+		.andExpect(jsonPath("$.itemValue", is("Item value should not be negative")));
 	}
 	@Test
 	@DisplayName("Edit item order details")
@@ -195,6 +228,24 @@ public class OrderDetailsControllerTest {
 		.andExpect(jsonPath("$.itemValue", is(45.0)));
 	}
 	@Test
+	@DisplayName("Edit item order details bad request")
+	@WithMockUser(username="testUser", roles={"USER"})
+	public void editItemOrderDetailsBadRequestHttpRequest() throws Exception {
+		orderDetailsDTO = updateItemOrderDetailsDTO();
+		// set an invalid qty
+		orderDetailsDTO.setQty(0);
+		// set an invalid itemValue
+		orderDetailsDTO.setItemValue(-20);
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/orderdetails/edit")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(orderDetailsDTO)))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.qty", is("Quantity should be at least 1")))
+		.andExpect(jsonPath("$.itemValue", is("Item value should not be negative")));
+	}
+	@Test
 	@DisplayName("Edit item order details by id")
 	@WithMockUser(username="testUser", roles={"USER"})
 	public void editItemOrderDetailsByIdHttpRequest() throws Exception {
@@ -211,6 +262,42 @@ public class OrderDetailsControllerTest {
 		.andExpect(jsonPath("$.itemValue", is(50.0)));
 	}
 	@Test
+	@DisplayName("Edit item order details by id not found")
+	@WithMockUser(username="testUser", roles={"USER"})
+	public void editItemOrderDetailsByIdNotFoundHttpRequest() throws Exception {
+		orderDetailsDTO = updateByIdItemOrderDetailsDTO();
+		// setup an item order details id not found in the database
+		int itemOrderDetailsId = 0;
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/orderdetails/edit/{id}", itemOrderDetailsId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(orderDetailsDTO)))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", 
+				is("ItemOrderDetails was not found with the given input data itemOrderDetailsId: "
+								+ itemOrderDetailsId)));
+	}
+	@Test
+	@DisplayName("Edit item order details bad request")
+	@WithMockUser(username="testUser", roles={"USER"})
+	public void editItemOrderDetailsByIdBadRequestHttpRequest() throws Exception {
+		orderDetailsDTO = updateItemOrderDetailsDTO();
+		// set an invalid qty
+		orderDetailsDTO.setQty(0);
+		// set an invalid itemValue
+		orderDetailsDTO.setItemValue(-20);
+		mockMvc.perform(MockMvcRequestBuilders.patch("/api/orderdetails/edit/{id}", 1)
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(orderDetailsDTO)))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.qty", is("Quantity should be at least 1")))
+		.andExpect(jsonPath("$.itemValue", is("Item value should not be negative")));
+	}
+	@Test
 	@DisplayName("Delete item order details by id")
 	@WithMockUser(username="testUser", roles={"USER"})
 	public void deleteItemOrderDetailsByIdHttpRequest() throws Exception {
@@ -219,5 +306,19 @@ public class OrderDetailsControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(content().contentType("text/plain;charset=UTF-8"))
 		.andExpect(content().string("Record is deleted successfully"));
+	}
+	@Test
+	@DisplayName("Delete item order details by id not found")
+	@WithMockUser(username="testUser", roles={"USER"})
+	public void deleteItemOrderDetailsByIdNotFoundHttpRequest() throws Exception {
+		int itemOrderDetailsId = 0;
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/orderdetails/delete/{id}", itemOrderDetailsId)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", 
+				is("ItemOrderDetails was not found with the given input data itemOrderDetailsId: "
+								+ itemOrderDetailsId)));
 	}
 }

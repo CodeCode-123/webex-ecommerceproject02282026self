@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.code.api.service.IItemOrderDetailsService;
 import com.code.api.service.IItemService;
+
+import jakarta.validation.Valid;
+
 import com.code.api.dto.OrderDetailsDTO;
 import com.code.api.entity.*;
 import com.code.api.exception.ResourceNotFoundException;
@@ -33,13 +36,13 @@ public class OrderDetailsController {
 		return orderDetailsService.getById(id).get();
 	}
 	@PostMapping("/create")
-	public ResponseEntity<ItemOrderDetails> createOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
+	public ResponseEntity<ItemOrderDetails> createOrderDetails(@Valid @RequestBody OrderDetailsDTO orderDetailsDTO) {
 		ItemOrderDetails orderDetails = generateOrderDetails(orderDetailsDTO);
 		orderDetailsService.add(orderDetails);
 		return ResponseEntity.ok(orderDetails);
 	}
 	@PutMapping("/edit")
-	public ResponseEntity<ItemOrderDetails> editOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
+	public ResponseEntity<ItemOrderDetails> editOrderDetails(@Valid @RequestBody OrderDetailsDTO orderDetailsDTO) {
 		int orderDetailsId = orderDetailsDTO.getItemOrderDetailsId();
 		if (orderDetailsService.getById(orderDetailsId).isEmpty()) {
 			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(orderDetailsId));
@@ -50,7 +53,7 @@ public class OrderDetailsController {
 		return ResponseEntity.ok(orderDetails);
 	}
 	@PatchMapping("/edit/{id}")
-	public ResponseEntity<ItemOrderDetails> editOrderDetailsById(@PathVariable("id") int id, @RequestBody OrderDetailsDTO orderDetailsDTO) {
+	public ResponseEntity<ItemOrderDetails> editOrderDetailsById(@PathVariable("id") int id, @Valid @RequestBody OrderDetailsDTO orderDetailsDTO) {
 		Optional<ItemOrderDetails> dbItemOrderDetails = orderDetailsService.getById(id);
 		if (dbItemOrderDetails.isEmpty()) {
 			throw new ResourceNotFoundException("ItemOrderDetails", "itemOrderDetailsId", String.valueOf(id));
