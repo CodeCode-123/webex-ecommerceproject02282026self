@@ -299,3 +299,27 @@ URL: http://localhost:8185/api/orders/1 <br>
 Method: DELETE,
 URL: http://localhost:8185/api/orders/delete/1<br>
 
+### Payment:
+1. Name: CreateOrderPayment, (ensure that there is a user with id=1 and an item order details with itemOrderDetailsId=1 in the database, get the users' information and item order details' information during retrieving),
+Method: POST,
+URL: http://localhost:8185/api/payment/createorder,
+RequestBody: 
+{
+    "users":{
+        "id": 1
+    },
+    "itemOrderDetailsList": [
+        {
+            "itemOrderDetailsId": 1
+        }
+    ]
+}<br>
+2. Name: ConfirmPayment, (ensure that there is response information of the CreateOrderPayment method, and the Razorpay Key Secret generated in your account),
+Method: POST,
+URL: http://localhost:8185/api/payment/confirmpayment,
+RequestBody: 
+{
+    "razorpay_order_id": "order_SRJjf0IIfBpI8i",
+    "razorpay_payment_id": "txn_1773537508412",
+    "razorpay_signature": "b6d478d7942772dd1cf8c627e428fa6af353348b64dc6a85797463a509a67700"
+}<br>
