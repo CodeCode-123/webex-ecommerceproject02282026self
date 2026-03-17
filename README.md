@@ -8,18 +8,18 @@ Method: POST,
 URL: http://localhost:8185/api/auth/signup,
 RequestBody: 
 {
-    "firstName": "test1",
-    "lastName": "test1",
-    "email": "test1@abc.com",
-    "password": "1234"
+    "firstName": "test",
+    "lastName": "test",
+    "email": "test@abc.com",
+    "password": "123456"
 } <br>
 2. Name: Login, (response entity will provide the generated token for authorization)
 Method: POST,
 URL: http://localhost:8185/api/auth/login,
 RequestBody:
 {
-    "email": "test1@abc.com",
-    "password": "1234"
+    "email": "test@abc.com",
+    "password": "123456"
 } <br>
 
 ### Category:
