@@ -28,13 +28,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.code.api.Ecommerceproject02282026selfApplication;
 import com.code.api.dto.OrderRequestDTO;
-import com.code.api.entity.ItemOrder;
+import com.code.api.dto.SignatureTestDTO;
 import com.code.api.entity.ItemOrderDetails;
 import com.code.api.entity.Users;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @TestPropertySource("/application-test.properties")
 @SpringBootTest(classes=Ecommerceproject02282026selfApplication.class)
@@ -58,6 +61,8 @@ public class PaymentControllerTest {
 	private ItemOrderDetails itemOrderDetailsTwo;
 	@Autowired
 	private OrderRequestDTO orderRequestDTO;
+	@Autowired
+	private SignatureTestDTO signatureTestDTO;
 	public static final MediaType mediaType=MediaType.APPLICATION_JSON;
 	@Value("${SQL_ADD_CATEGORY_ONE}")
 	private String sqlAddCategoryOne;
@@ -106,20 +111,36 @@ public class PaymentControllerTest {
 		jdbc.update(sqlAddItem, "Cheese Pizza", 10, 1);
 		jdbc.update(sqlAddItem, "Cheese Burger", 6, 2);
 		jdbc.update(sqlAddItem, "Double Cheese Burger", 8, 2);
+		jdbc.update(sqlAddItem, "New York Slice", 7, 1);
+		jdbc.update(sqlAddItem, "Salad Pizza", 8, 1);
 		// add ItemOrderDetails
 		String sqlAddItemOrderDetails = "INSERT INTO item_order_details(item_id, qty, item_value) VALUES(?,?,?)";
 		jdbc.update(sqlAddItemOrderDetails, 1, 2, 20);
 		jdbc.update(sqlAddItemOrderDetails, 2, 3, 18);
 		jdbc.update(sqlAddItemOrderDetails, 3, 5, 40);
+		jdbc.update(sqlAddItemOrderDetails, 4, 4, 28);
+		jdbc.update(sqlAddItemOrderDetails, 5, 3, 24);
+		// add ItemOrder
+		String sqlAddItemOrder = "INSERT INTO item_order(order_date, total_amount, user_id) VALUES(?, ?, ?)";
+		jdbc.update(sqlAddItemOrder, "17-03-2026 20:00:31", 28, 1);
+		jdbc.update(sqlAddItemOrder, "17-03-2026 21:00:31", 24, 1);
+		// update ItemOrderDetails
+		String sqlUpdateItemOrderDetails = "UPDATE item_order_details SET order_id=? WHERE item_order_details_id=?";
+		jdbc.update(sqlUpdateItemOrderDetails, 1, 4);
+		jdbc.update(sqlUpdateItemOrderDetails, 2, 5);
+		// add Payment
+		String sqlAddPayment = "INSERT INTO payment (razorpay_order_id, razorpay_payment_id, amount, status, order_id) VALUES(?,?,?,?,?)";
+		jdbc.update(sqlAddPayment, "order_SSU0gfeRAOFIgn", "txn_1773792031843", 28, "created", 1);
+		jdbc.update(sqlAddPayment, "order_SSU0gfeRAOFIgm", "txn_1773792031844", 24, "created", 2);
 	}
 	@AfterEach
 	public void setupAfterTransactional() {
 		jdbc.execute(sqlDeletePayment);
 		jdbc.execute(sqlResetPayment);
-		jdbc.execute(sqlDeleteItemOrder);
-		jdbc.execute(sqlResetItemOrder);
 		jdbc.execute(sqlDeleteItemOrderDetails);
 		jdbc.execute(sqlResetItemOrderDetails);
+		jdbc.execute(sqlDeleteItemOrder);
+		jdbc.execute(sqlResetItemOrder);
 		jdbc.execute(sqlDeleteItem);
 		jdbc.execute(sqlResetItem);
 		jdbc.execute(sqlDeleteCategory);
@@ -146,6 +167,56 @@ public class PaymentControllerTest {
 		return data;
 	}
 	
+	@Test
+	@DisplayName("Get all Razorpay orders")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void getAllPayments() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/payment/")
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$", hasSize(2)))
+		.andExpect(jsonPath("$[0].razorpayOrderId", is("order_SSU0gfeRAOFIgn")))
+		.andExpect(jsonPath("$[1].razorpayOrderId", is("order_SSU0gfeRAOFIgm")));
+	}
+	@Test
+	@DisplayName("Get Razorpay orders by id")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void getPaymentById() throws Exception {
+		int id = 1;
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/payment/{id}", id)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.razorpayOrderId", is("order_SSU0gfeRAOFIgn")))
+		.andExpect(jsonPath("$.razorpayPaymentId", is("txn_1773792031843")));
+	}
+	@Test
+	@DisplayName("Get Razorpay orders by id not found")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void getPaymentByIdNotFound() throws Exception {
+		int id = 0;
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/payment/{id}", id)
+				.with(SecurityMockMvcRequestPostProcessors.jwt()))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/json"))
+		.andExpect(jsonPath("$.errorCode", is("404 NOT_FOUND")))
+		.andExpect(jsonPath("$.errorMessage", is("Payment was not found with the given input data paymentId: " + id)));
+	}
+	@Test
+	@DisplayName("Test Signature")
+	@WithMockUser(username="testUser", roles= {"USER"})
+	public void testSignature() throws Exception {
+		signatureTestDTO.setOrderId("order_SSTXzlD6sc2FOU");
+		signatureTestDTO.setPaymentId("txn_1773790400648");
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/payment/test-signature")
+				.with(SecurityMockMvcRequestPostProcessors.jwt())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(signatureTestDTO)))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("text/plain;charset=UTF-8"))
+		.andExpect(content().string("ea07e8287f256cdc79105a2a8bae92588d3f6e2ef3f1181e794fcb4fc07d628a"));
+	}
 	@Test
 	@DisplayName("Create a Razorpay order")
 	@WithMockUser(username="testUser", roles= {"USER"})

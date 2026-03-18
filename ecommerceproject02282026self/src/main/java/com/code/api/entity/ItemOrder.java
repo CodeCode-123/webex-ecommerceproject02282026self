@@ -2,6 +2,8 @@ package com.code.api.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,5 +42,6 @@ public class ItemOrder {
 	private List<ItemOrderDetails> itemOrderDetailsList;
 	@OneToOne(mappedBy="order", cascade = {CascadeType.PERSIST, CascadeType.DETACH, 
 			CascadeType.MERGE, CascadeType.REFRESH})
+	@JsonManagedReference
 	private Payment payment;
 }

@@ -2,6 +2,7 @@ package com.code.api.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -38,6 +39,7 @@ public class Payment {
 	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, 
 			CascadeType.MERGE, CascadeType.REFRESH})
 	@JoinColumn(name="order_id")
-	@JsonIgnore
+	//@JsonIgnore
+	@JsonBackReference
 	private ItemOrder order;
 }
