@@ -298,6 +298,10 @@ URL: http://localhost:8185/api/orders/1 <br>
 4. Name: DeleteOrdersById,
 Method: DELETE,
 URL: http://localhost:8185/api/orders/delete/1<br>
+5. Name: GetOrderByRazorpayOrderId, (ensure that there is a payment with a razorpay_order_id and order_id saved in the database)
+Method: GET,
+URL: http://localhost:8185/api/orders/razorpay/order_SSU0gfeRAOFIgn<br>
+
 
 ### Payment:
 1. Name: CreateOrderPayment, (ensure that there is a user with id=1 and an item order details with itemOrderDetailsId=1 in the database, get the users' information and item order details' information during retrieving),
@@ -322,4 +326,12 @@ RequestBody:
     "razorpay_order_id": "order_SRJjf0IIfBpI8i",
     "razorpay_payment_id": "txn_1773537508412",
     "razorpay_signature": "b6d478d7942772dd1cf8c627e428fa6af353348b64dc6a85797463a509a67700"
+}<br>
+3. Name: TestSignature, (ensure that there is a Razorpay Key Secret generated in your account),
+Method: GET,
+URL: http://localhost:8185/api/payment/test-signature,
+RequestBody: 
+{
+    "orderId": "order_SSTXzlD6sc2FOU",
+    "paymentId": "txn_1773790400648"
 }<br>
