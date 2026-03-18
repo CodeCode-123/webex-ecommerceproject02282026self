@@ -40,6 +40,13 @@ public class OrderController {
 		}
 		return itemOrderService.getById(id).get();
 	}
+	@GetMapping("/razorpay/{id}")
+	public ItemOrder getOrderByRazorpayId(@PathVariable("id") String razorpayId) {
+		if (itemOrderService.getOrderByRazorpayOrderId(razorpayId).isEmpty()) {
+			throw new ResourceNotFoundException("ItemOrder", "itemOrderId", razorpayId);
+		}
+		return itemOrderService.getOrderByRazorpayOrderId(razorpayId).get();
+	}
 	@PostMapping("/placeorder") // create an order with items and users
 	public ResponseEntity<ItemOrder> placeOrder(@Valid @RequestBody OrderRequestDTO orderRequestDTO) {
 		Users users = null;

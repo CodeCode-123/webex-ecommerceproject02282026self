@@ -7,9 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.code.api.entity.ItemOrder;
+import com.code.api.entity.Payment;
 
 @Repository
 public interface IOrdersRepository extends JpaRepository<ItemOrder, Integer>{
 	@Query(value="SELECT i FROM ItemOrder i JOIN FETCH i.itemOrderDetailsList WHERE i.orderId=:data")
 	Optional<ItemOrder> findOrderAndItemOrderDetailsById(@Param("data") int orderId);
+	@Query(value="SELECT i FROM ItemOrder i JOIN FETCH i.payment p WHERE p.razorpayOrderId=:data")
+	Optional<ItemOrder> findByRazorpayOrderId(@Param("data") String razorpayOrderId);
 }

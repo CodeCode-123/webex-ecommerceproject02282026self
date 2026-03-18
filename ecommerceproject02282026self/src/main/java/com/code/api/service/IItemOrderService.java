@@ -15,5 +15,6 @@ public interface IItemOrderService {
 	void deleteById(int id);
 	List<ItemOrder> getAll();
 	Optional<ItemOrder> getById(int id);
-	Optional<ItemOrder> getOrderAndItemOrderDetailsById(@Param("data") int orderId);
+	Optional<ItemOrder> getOrderAndItemOrderDetailsById(int orderId);
+	Optional<ItemOrder> getOrderByRazorpayOrderId(String razorpayOrderId);
 }
