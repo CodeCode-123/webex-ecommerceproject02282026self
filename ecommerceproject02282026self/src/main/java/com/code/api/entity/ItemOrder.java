@@ -32,12 +32,6 @@ public class ItemOrder {
 	private String orderDate;
 	@Column(name="total_amount")
 	private double totalAmount;
-//	@Column(name="created_at")
-//	private LocalDateTime createdAt = LocalDateTime.now();
-//	@Column(name="razorpayOrderId")
-//	private String razorpayOrderId;
-//	@Column(name="status")
-//	private String status;
 	//@ManyToMany
 	@ManyToOne
 	@JoinColumn(name="user_id")

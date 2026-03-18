@@ -85,6 +85,10 @@ public class PaymentControllerTest {
 	private String sqlDeleteUsers;
 	@Value("${SQL_RESET_USERS}")
 	private String sqlResetUsers;
+	@Value("${SQL_DELETE_PAYMENT}")
+	private String sqlDeletePayment;
+	@Value("${SQL_RESET_PAYMENT}")
+	private String sqlResetPayment;
 	
 	@BeforeAll
 	public static void setup() {
@@ -110,6 +114,8 @@ public class PaymentControllerTest {
 	}
 	@AfterEach
 	public void setupAfterTransactional() {
+		jdbc.execute(sqlDeletePayment);
+		jdbc.execute(sqlResetPayment);
 		jdbc.execute(sqlDeleteItemOrder);
 		jdbc.execute(sqlResetItemOrder);
 		jdbc.execute(sqlDeleteItemOrderDetails);

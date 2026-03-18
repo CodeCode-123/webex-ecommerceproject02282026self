@@ -14,11 +14,13 @@ import com.code.api.dto.LoginDTO;
 import com.code.api.dto.OrderDetailsDTO;
 import com.code.api.dto.OrderRequestDTO;
 import com.code.api.dto.RegisterDTO;
+import com.code.api.dto.SignatureTestDTO;
 import com.code.api.dto.UsersDTO;
 import com.code.api.entity.Category;
 import com.code.api.entity.Item;
 import com.code.api.entity.ItemOrder;
 import com.code.api.entity.ItemOrderDetails;
+import com.code.api.entity.Payment;
 import com.code.api.entity.Users;
 import com.code.api.repository.IUsersRepository;
 import com.code.api.service.AuthenticationService;
@@ -26,6 +28,7 @@ import com.code.api.service.CategoryServiceImpl;
 import com.code.api.service.ItemOrderDetailsServiceImpl;
 import com.code.api.service.ItemOrderServiceImpl;
 import com.code.api.service.JwtService;
+import com.code.api.service.PaymentServiceImpl;
 import com.code.api.service.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -62,6 +65,10 @@ public class Ecommerceproject02282026selfApplication {
 	@Bean(name="jwtService")
 	JwtService getJwtService() {
 		return new JwtService();
+	}
+	@Bean(name="paymentService")
+	PaymentServiceImpl getPaymentService() {
+		return new PaymentServiceImpl();
 	}
 	
 	@Bean(name="category")
@@ -128,5 +135,15 @@ public class Ecommerceproject02282026selfApplication {
 	@Scope(value="prototype")
 	OrderRequestDTO getOrderRequestDTO() {
 		return new OrderRequestDTO();
+	}
+	@Bean(name="payment")
+	@Scope(value="prototype")
+	Payment getPayment() {
+		return new Payment();
+	}
+	@Bean(name="signatureDTO")
+	@Scope(value="prototype")
+	SignatureTestDTO getSignatureTestDTO() {
+		return new SignatureTestDTO();
 	}
 }
